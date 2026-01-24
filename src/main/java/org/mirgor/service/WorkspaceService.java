@@ -17,13 +17,10 @@ public class WorkspaceService {
 
     @Transactional
     public Workspace createWorkspace(Workspace workspace) {
-        if (workspaceRepository.existsByWorkspaceId(workspace.getId())) {
+        if (workspace.getId() != null && workspaceRepository.existsById(workspace.getId())) {
             throw new RuntimeException("Workspace ID already exists: " + workspace.getId());
         }
 
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-//        workspace.setUser(user);
         return workspaceRepository.save(workspace);
     }
 
@@ -44,7 +41,7 @@ public class WorkspaceService {
             existingWorkspace.setEmail(updatedWorkspace.getEmail());
         }
         if (updatedWorkspace.getId() != null && !updatedWorkspace.getId().equals(existingWorkspace.getId())) {
-            if (workspaceRepository.existsByWorkspaceId(updatedWorkspace.getId())) {
+            if (workspaceRepository.existsById(updatedWorkspace.getId())) {
                 throw new RuntimeException("Workspace ID already exists: " + updatedWorkspace.getId());
             }
             existingWorkspace.setId(updatedWorkspace.getId());
