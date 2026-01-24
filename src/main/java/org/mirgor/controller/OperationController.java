@@ -1,5 +1,6 @@
 package org.mirgor.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.dto.OperationDto;
 import org.mirgor.service.OperationService;
@@ -15,11 +16,13 @@ import java.util.List;
 @RequestMapping("/api/operations")
 public class OperationController {
 
+    //TODO add global error handler
+
     private final OperationService operationService;
     private final OperationMapper mapper;
 
     @PostMapping
-    public ResponseEntity<OperationDto> createOperation(@RequestBody OperationDto operationDto) {
+    public ResponseEntity<OperationDto> createOperation(@RequestBody @Valid OperationDto operationDto) {
         try {
             var operation = mapper.fromDto(operationDto);
             var createdOperation = operationService.createOperation(operation);
@@ -47,7 +50,7 @@ public class OperationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OperationDto> updateOperation(@PathVariable Long id, @RequestBody OperationDto operationDto) {
+    public ResponseEntity<OperationDto> updateOperation(@PathVariable Long id, @RequestBody @Valid OperationDto operationDto) {
         try {
             var updatedOperation = operationService.updateOperation(id, mapper.fromDto(operationDto));
             var updatedOperationDto = mapper.toDto(updatedOperation);

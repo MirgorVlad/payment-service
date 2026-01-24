@@ -17,7 +17,7 @@ public class OperationService {
 
     @Transactional
     public Operation createOperation(Operation operation) {
-        if (operationRepository.existsById(operation.getId())) {
+        if (operation.getId() != null && operationRepository.existsById(operation.getId())) {
             throw new RuntimeException("Operation ID already exists: " + operation.getId());
         }
 

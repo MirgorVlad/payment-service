@@ -1,5 +1,6 @@
 package org.mirgor.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.dto.WorkspaceDto;
 import org.mirgor.service.WorkspaceService;
@@ -19,7 +20,7 @@ public class WorkspaceController {
     private final WorkspaceMapper mapper;
 
     @PostMapping
-    public ResponseEntity<WorkspaceDto> createWorkspace(@RequestBody WorkspaceDto workspaceDto) {
+    public ResponseEntity<WorkspaceDto> createWorkspace(@RequestBody @Valid WorkspaceDto workspaceDto) {
         try {
             var workspace = mapper.fromDto(workspaceDto);
             var createdWorkspace = workspaceService.createWorkspace(workspace);
@@ -47,7 +48,7 @@ public class WorkspaceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@PathVariable Long id, @RequestBody WorkspaceDto workspaceDto) {
+    public ResponseEntity<WorkspaceDto> updateWorkspace(@PathVariable Long id, @RequestBody @Valid WorkspaceDto workspaceDto) {
         try {
             var updatedWorkspace = workspaceService.updateWorkspace(id, mapper.fromDto(workspaceDto));
             var updatedWorkspaceDto = mapper.toDto(updatedWorkspace);
