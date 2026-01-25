@@ -16,20 +16,14 @@ import java.util.List;
 @RequestMapping("/api/operations")
 public class OperationController {
 
-    //TODO add global error handler
-
     private final OperationService operationService;
     private final OperationMapper mapper;
 
     @PostMapping
     public ResponseEntity<OperationDto> createOperation(@RequestBody @Valid OperationDto operationDto) {
-        try {
-            var operation = mapper.fromDto(operationDto);
-            var createdOperation = operationService.createOperation(operation);
-            return new ResponseEntity<>(mapper.toDto(createdOperation), HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        var operation = mapper.fromDto(operationDto);
+        var createdOperation = operationService.createOperation(operation);
+        return new ResponseEntity<>(mapper.toDto(createdOperation), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -51,22 +45,14 @@ public class OperationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<OperationDto> updateOperation(@PathVariable Long id, @RequestBody @Valid OperationDto operationDto) {
-        try {
-            var updatedOperation = operationService.updateOperation(id, mapper.fromDto(operationDto));
-            var updatedOperationDto = mapper.toDto(updatedOperation);
-            return ResponseEntity.ok(updatedOperationDto);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        var updatedOperation = operationService.updateOperation(id, mapper.fromDto(operationDto));
+        var updatedOperationDto = mapper.toDto(updatedOperation);
+        return ResponseEntity.ok(updatedOperationDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOperation(@PathVariable Long id) {
-        try {
-            operationService.deleteOperation(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        operationService.deleteOperation(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

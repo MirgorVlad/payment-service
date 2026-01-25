@@ -15,7 +15,7 @@ public class OperationMapper implements EntityMapper<Operation, OperationDto> {
     public Operation fromDto(OperationDto operationDto) {
         var workspaceOpt = workspaceService.getWorkspaceById(operationDto.getWorkspaceId());
         if (workspaceOpt.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Workspace with if %s not fount", operationDto.getWorkspaceId()));
+            throw new IllegalArgumentException(String.format("Workspace with if %s not found", operationDto.getWorkspaceId()));
         }
         return Operation.builder()
                 .workspace(workspaceOpt.get())

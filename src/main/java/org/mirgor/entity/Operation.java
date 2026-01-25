@@ -23,9 +23,10 @@ public class Operation {
     private Workspace workspace;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EntityType entityType;
 
-    @Column
+    @Column(nullable = false)
     private Long count;
 
 
