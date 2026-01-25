@@ -9,7 +9,6 @@ public class WorkspaceMapper implements EntityMapper<Workspace, WorkspaceDto> {
 
     public Workspace fromDto(WorkspaceDto workspaceDto) {
         return Workspace.builder()
-                .id(workspaceDto.getId())
                 .email(workspaceDto.getEmail())
                 .password(workspaceDto.getPassword()) //TODO fix when Spring Security Added
                 .build();

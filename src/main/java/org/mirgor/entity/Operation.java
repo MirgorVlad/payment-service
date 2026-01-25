@@ -2,10 +2,12 @@ package org.mirgor.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,9 +23,10 @@ public class Operation {
     private Workspace workspace;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private EntityType entityType;
 
-    @Column
+    @Column(nullable = false)
     private Long count;
 
 
