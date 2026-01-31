@@ -1,9 +1,10 @@
-package org.mirgor.service.security;
+package org.mirgor.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.mirgor.security.principal.SecurityUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -17,21 +18,24 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
+    public static final String EMAIL = "email";
+
     @Value("${jwt.secret}")
     public String SECRET;
 
     @Value("${jwt.expiration}")
     public long TOKEN_EXPIRATION;
 
-    public String generateToken(String email) {
+    public String generateToken(SecurityUser securityUser) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, email);
+        claims.put(EMAIL, securityUser.getUsername());
+        return createToken(claims, String.valueOf(securityUser.getId()));
     }
 
-    private String createToken(Map<String, Object> claims, String email) {
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
-                .subject(email)
+                .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                 .signWith(getSignKey())
@@ -43,8 +47,13 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public long extractUserId(String token) {
+        String subject = extractClaim(token, Claims::getSubject);
+        return Long.parseLong(subject);
+    }
+
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, c -> (String) c.get(EMAIL));
     }
 
     public Date extractExpiration(String token) {

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
 
@@ -61,20 +61,5 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
-        var userOptional = userRepository.findByEmail(username);
-        if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("Username %s is not found", username));
-        }
-        var user = userOptional.get();
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.emptyList()
-        );
     }
 }

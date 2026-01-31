@@ -4,9 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.dto.AuthRequest;
 import org.mirgor.dto.UserDto;
+import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.service.UserService;
 import org.mirgor.service.mapper.UserMapper;
-import org.mirgor.service.security.JwtService;
+import org.mirgor.security.jwt.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,8 +37,8 @@ public class AuthController {
                         authRequest.password()
                 )
         );
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return jwtService.generateToken(userDetails.getUsername());
+        SecurityUser principal = (SecurityUser) authentication.getPrincipal();
+        return jwtService.generateToken(principal);
     }
 
     @PostMapping("/signup")

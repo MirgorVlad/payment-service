@@ -1,7 +1,7 @@
-package org.mirgor.config;
+package org.mirgor.security;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.filter.JwtAuthFilter;
+import org.mirgor.security.config.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
