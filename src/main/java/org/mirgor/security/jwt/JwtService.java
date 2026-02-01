@@ -18,8 +18,6 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    public static final String EMAIL = "email";
-
     @Value("${jwt.secret}")
     public String SECRET;
 
@@ -28,8 +26,7 @@ public class JwtService {
 
     public String generateToken(SecurityUser securityUser) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(EMAIL, securityUser.getUsername());
-        return createToken(claims, String.valueOf(securityUser.getId()));
+        return createToken(claims, securityUser.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -47,13 +44,8 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public long extractUserId(String token) {
-        String subject = extractClaim(token, Claims::getSubject);
-        return Long.parseLong(subject);
-    }
-
     public String extractUsername(String token) {
-        return extractClaim(token, c -> (String) c.get(EMAIL));
+        return extractClaim(token, Claims::getSubject);
     }
 
     public Date extractExpiration(String token) {

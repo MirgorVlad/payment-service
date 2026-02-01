@@ -1,6 +1,9 @@
 package org.mirgor.api;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import org.mirgor.exception.EmailAlreadyExistsException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -44,6 +48,34 @@ public class GlobalExceptionHandler {
                 "Validation Error",
                 messages);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // Handle email constraint violations
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleUserEmailExistsException(EmailAlreadyExistsException ex) {
+        String message = "Email already exists";
+        log.error(message, ex);
+
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                message);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    // Handle database constraint violations
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "Database error";
+        log.error(message, ex);
+
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal error",
+                message);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     // Handle any other exception
