@@ -2,7 +2,9 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.entity.User;
+import org.mirgor.exception.EmailAlreadyExistsException;
 import org.mirgor.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +19,12 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
-        if (user.getId() != null && userRepository.existsById(user.getId())) {
-            throw new RuntimeException("Username already exists: " + user.getUsername());
+        try {
+            user.setId(null);
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            throw new EmailAlreadyExistsException();
         }
-
-        return userRepository.save(user);
     }
 
     public Optional<User> getUserById(Long id) {

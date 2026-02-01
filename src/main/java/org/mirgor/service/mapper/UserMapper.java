@@ -1,17 +1,22 @@
 package org.mirgor.service.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.mirgor.dto.UserDto;
 import org.mirgor.entity.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper implements EntityMapper<User, UserDto> {
+
+    private final PasswordEncoder passwordEncoder;
 
     public User fromDto(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return user;
     }
 
