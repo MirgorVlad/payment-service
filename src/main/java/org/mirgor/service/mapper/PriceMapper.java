@@ -13,7 +13,7 @@ public class PriceMapper implements EntityMapper<Price, PriceDto> {
     private final WorkspaceService workspaceService;
 
     public Price fromDto(PriceDto priceDto) {
-        var workspaceOpt = workspaceService.getWorkspaceById(priceDto.getWorkspaceId(), null);
+        var workspaceOpt = workspaceService.getWorkspaceById(priceDto.getWorkspaceId());
         if (workspaceOpt.isEmpty()) {
             throw new IllegalArgumentException(String.format("Workspace with id %s not found", priceDto.getWorkspaceId()));
         }

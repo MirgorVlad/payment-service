@@ -3,6 +3,7 @@ package org.mirgor.service;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.entity.Operation;
 import org.mirgor.repository.OperationRepository;
+import org.mirgor.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,42 +18,41 @@ public class OperationService {
 
     @Transactional
     public Operation createOperation(Operation operation) {
-        if (operation.getId() != null && operationRepository.existsById(operation.getId())) {
-            throw new RuntimeException("Operation ID already exists: " + operation.getId());
-        }
-
+        operation.setId(null);
         return operationRepository.save(operation);
     }
 
     public Optional<Operation> getOperationById(Long id) {
-        return operationRepository.findById(id);
+        var userId = SecurityUtil.getCurrentUserId();
+        return operationRepository.findByIdAndWorkspaceUserId(id, userId);
     }
 
-    public List<Operation> getAllOperations() {
-        return operationRepository.findAll();
+    public List<Operation> getAllOperations(Long workspaceId) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (workspaceId != null) {
+            return operationRepository.findByWorkspaceId(workspaceId);
+        }
+        return operationRepository.findByWorkspaceUserId(userId);
     }
 
     @Transactional
     public Operation updateOperation(Long id, Operation updatedOperation) {
-        Operation existingOperation = operationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Operation not found with id: " + id));
+        var operationOptional = getOperationById(id);
+        var operation = operationOptional.orElseThrow(() ->
+                new IllegalArgumentException(String.format("Operation with id %s is not found", id)));
 
-        if (updatedOperation.getWorkspace() != null) {
-            existingOperation.setWorkspace(updatedOperation.getWorkspace());
-        }
-        if (updatedOperation.getOperationalEntityType() != null) {
-            existingOperation.setOperationalEntityType(updatedOperation.getOperationalEntityType());
-        }
-        if (updatedOperation.getCount() != null) {
-            existingOperation.setCount(updatedOperation.getCount());
-        }
 
-        return operationRepository.save(existingOperation);
+        operation.setWorkspace(updatedOperation.getWorkspace());
+        operation.setOperationalEntityType(updatedOperation.getOperationalEntityType());
+        operation.setCount(updatedOperation.getCount());
+
+        return operationRepository.save(operation);
     }
 
     @Transactional
     public void deleteOperation(Long id) {
-        if (!operationRepository.existsById(id)) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (!operationRepository.existsByIdAndWorkspaceUserId(id, userId)) {
             throw new RuntimeException("Operation not found with id: " + id);
         }
         operationRepository.deleteById(id);

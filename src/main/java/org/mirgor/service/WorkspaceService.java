@@ -33,6 +33,7 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getAllWorkspaces() {
+        //TODO handle admin role
         var userId = SecurityUtil.getCurrentUserId();
         return workspaceRepository.findByUserId(userId);
     }

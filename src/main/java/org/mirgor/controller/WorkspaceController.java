@@ -51,8 +51,6 @@ public class WorkspaceController {
     @PutMapping("/{id}")
     public ResponseEntity<WorkspaceDto> updateWorkspace(@PathVariable Long id, @RequestBody @Valid WorkspaceDto workspaceDto) {
         try {
-            var currentUserId = SecurityUtil.getCurrentUserId();
-            workspaceDto.setUserId(currentUserId);
             var updatedWorkspace = workspaceService.updateWorkspace(id, mapper.fromDto(workspaceDto));
             var updatedWorkspaceDto = mapper.toDto(updatedWorkspace);
             return ResponseEntity.ok(updatedWorkspaceDto);

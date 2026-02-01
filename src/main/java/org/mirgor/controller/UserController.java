@@ -20,14 +20,6 @@ public class UserController {
     private final UserService userService;
     private final UserMapper mapper;
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
-        var user = mapper.fromDto(userDto);
-        var createdUser = userService.createUser(user);
-        return new ResponseEntity<>(mapper.toDto(createdUser), HttpStatus.CREATED);
-    }
-
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
