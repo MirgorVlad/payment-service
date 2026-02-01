@@ -14,8 +14,8 @@ public class UserMapper implements EntityMapper<User, UserDto> {
 
     public User fromDto(UserDto userDto) {
         User user = new User();
-        user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
+        user.setRole(userDto.getRole());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return user;
     }
@@ -23,8 +23,8 @@ public class UserMapper implements EntityMapper<User, UserDto> {
     public UserDto toDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
-                .username(user.getUsername())
                 .email(user.getEmail())
+                .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

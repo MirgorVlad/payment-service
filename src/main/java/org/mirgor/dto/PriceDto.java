@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.entity.Currency;
-import org.mirgor.entity.EntityType;
+import org.mirgor.common.entity.Currency;
+import org.mirgor.common.entity.OperationalEntityType;
 
 import java.math.BigDecimal;
 
@@ -23,7 +23,7 @@ public class PriceDto {
     private Long workspaceId;
 
     @NotNull
-    private EntityType entityType;
+    private OperationalEntityType operationalEntityType;
 
     @NotNull
     private Currency currency;

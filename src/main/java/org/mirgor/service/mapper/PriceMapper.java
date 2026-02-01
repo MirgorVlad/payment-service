@@ -13,13 +13,13 @@ public class PriceMapper implements EntityMapper<Price, PriceDto> {
     private final WorkspaceService workspaceService;
 
     public Price fromDto(PriceDto priceDto) {
-        var workspaceOpt = workspaceService.getWorkspaceById(priceDto.getWorkspaceId());
+        var workspaceOpt = workspaceService.getWorkspaceById(priceDto.getWorkspaceId(), null);
         if (workspaceOpt.isEmpty()) {
             throw new IllegalArgumentException(String.format("Workspace with id %s not found", priceDto.getWorkspaceId()));
         }
         return Price.builder()
                 .workspace(workspaceOpt.get())
-                .entityType(priceDto.getEntityType())
+                .operationalEntityType(priceDto.getOperationalEntityType())
                 .currency(priceDto.getCurrency())
                 .price(priceDto.getPrice())
                 .build();
@@ -29,7 +29,7 @@ public class PriceMapper implements EntityMapper<Price, PriceDto> {
         return PriceDto.builder()
                 .id(price.getId())
                 .workspaceId(price.getWorkspace().getId())
-                .entityType(price.getEntityType())
+                .operationalEntityType(price.getOperationalEntityType())
                 .currency(price.getCurrency())
                 .price(price.getPrice())
                 .build();

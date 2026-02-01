@@ -13,13 +13,13 @@ public class OperationMapper implements EntityMapper<Operation, OperationDto> {
     private final WorkspaceService workspaceService;
 
     public Operation fromDto(OperationDto operationDto) {
-        var workspaceOpt = workspaceService.getWorkspaceById(operationDto.getWorkspaceId());
+        var workspaceOpt = workspaceService.getWorkspaceById(operationDto.getWorkspaceId(), null);
         if (workspaceOpt.isEmpty()) {
             throw new IllegalArgumentException(String.format("Workspace with if %s not found", operationDto.getWorkspaceId()));
         }
         return Operation.builder()
                 .workspace(workspaceOpt.get())
-                .entityType(operationDto.getEntityType())
+                .operationalEntityType(operationDto.getOperationalEntityType())
                 .count(operationDto.getCount())
                 .build();
     }
@@ -28,7 +28,7 @@ public class OperationMapper implements EntityMapper<Operation, OperationDto> {
         return OperationDto.builder()
                 .id(operation.getId())
                 .workspaceId(operation.getWorkspace().getId())
-                .entityType(operation.getEntityType())
+                .operationalEntityType(operation.getOperationalEntityType())
                 .count(operation.getCount())
                 .build();
     }

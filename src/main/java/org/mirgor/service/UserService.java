@@ -2,7 +2,7 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.entity.User;
-import org.mirgor.exception.EmailAlreadyExistsException;
+import org.mirgor.exception.ResourceAlreadyExistsException;
 import org.mirgor.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class UserService {
             user.setId(null);
             return userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
-            throw new EmailAlreadyExistsException();
+            throw new ResourceAlreadyExistsException(user, "email", user.getEmail());
         }
     }
 

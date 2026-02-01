@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface OperationRepository extends JpaRepository<Operation, Long> {
 
     boolean existsById(Long id);
+
+    boolean existsByIdAndWorkspaceUserId(Long id, Long userId);
 }

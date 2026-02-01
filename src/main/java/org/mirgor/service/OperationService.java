@@ -40,8 +40,8 @@ public class OperationService {
         if (updatedOperation.getWorkspace() != null) {
             existingOperation.setWorkspace(updatedOperation.getWorkspace());
         }
-        if (updatedOperation.getEntityType() != null) {
-            existingOperation.setEntityType(updatedOperation.getEntityType());
+        if (updatedOperation.getOperationalEntityType() != null) {
+            existingOperation.setOperationalEntityType(updatedOperation.getOperationalEntityType());
         }
         if (updatedOperation.getCount() != null) {
             existingOperation.setCount(updatedOperation.getCount());

@@ -40,8 +40,8 @@ public class PriceService {
         if (updatedPrice.getWorkspace() != null) {
             existingPrice.setWorkspace(updatedPrice.getWorkspace());
         }
-        if (updatedPrice.getEntityType() != null) {
-            existingPrice.setEntityType(updatedPrice.getEntityType());
+        if (updatedPrice.getOperationalEntityType() != null) {
+            existingPrice.setOperationalEntityType(updatedPrice.getOperationalEntityType());
         }
         if (updatedPrice.getCurrency() != null) {
             existingPrice.setCurrency(updatedPrice.getCurrency());

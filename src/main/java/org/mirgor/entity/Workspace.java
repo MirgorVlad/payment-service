@@ -20,14 +20,17 @@ public class Workspace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column( unique = true, nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
+    private String host;
+
+    @Column(nullable = false, length = 100)
     private String email;
 
     @Column(nullable = false, length = 100)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "user_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
