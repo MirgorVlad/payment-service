@@ -27,8 +27,8 @@ public class PriceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PriceDto>> getAllPrices() {
-        var prices = priceService.getAllPrices();
+    public ResponseEntity<List<PriceDto>> getAllPrices(@RequestParam(required = false) Long workspaceId) {
+        var prices = priceService.getAllPrices(workspaceId);
         var priceDtos = prices.stream()
                 .map(mapper::toDto)
                 .toList();

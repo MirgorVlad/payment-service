@@ -3,6 +3,7 @@ package org.mirgor.service;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.entity.Price;
 import org.mirgor.repository.PriceRepository;
+import org.mirgor.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,45 +18,42 @@ public class PriceService {
 
     @Transactional
     public Price createPrice(Price price) {
-        if (price.getId() != null && priceRepository.existsById(price.getId())) {
-            throw new RuntimeException("Price ID already exists: " + price.getId());
-        }
-
+        price.setId(null);
         return priceRepository.save(price);
     }
 
     public Optional<Price> getPriceById(Long id) {
-        return priceRepository.findById(id);
+        var userId = SecurityUtil.getCurrentUserId();
+        return priceRepository.findByIdAndWorkspaceUserId(id, userId);
     }
 
-    public List<Price> getAllPrices() {
-        return priceRepository.findAll();
+    public List<Price> getAllPrices(Long workspaceId) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (workspaceId != null) {
+            return priceRepository.findByWorkspaceId(workspaceId);
+        }
+        return priceRepository.findByWorkspaceUserId(userId);
     }
 
     @Transactional
     public Price updatePrice(Long id, Price updatedPrice) {
-        Price existingPrice = priceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Price not found with id: " + id));
+        var priceOptional = getPriceById(id);
+        var price = priceOptional.orElseThrow(() ->
+                new IllegalArgumentException(String.format("Price with id %s is not found", id)));
 
-        if (updatedPrice.getWorkspace() != null) {
-            existingPrice.setWorkspace(updatedPrice.getWorkspace());
-        }
-        if (updatedPrice.getOperationalEntityType() != null) {
-            existingPrice.setOperationalEntityType(updatedPrice.getOperationalEntityType());
-        }
-        if (updatedPrice.getCurrency() != null) {
-            existingPrice.setCurrency(updatedPrice.getCurrency());
-        }
-        if (updatedPrice.getPrice() != null) {
-            existingPrice.setPrice(updatedPrice.getPrice());
-        }
 
-        return priceRepository.save(existingPrice);
+        price.setWorkspace(updatedPrice.getWorkspace());
+        price.setPrice(updatedPrice.getPrice());
+        price.setCurrency(updatedPrice.getCurrency());
+        price.setOperationalEntityType(updatedPrice.getOperationalEntityType());
+
+        return priceRepository.save(price);
     }
 
     @Transactional
     public void deletePrice(Long id) {
-        if (!priceRepository.existsById(id)) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (!priceRepository.existsByIdAndWorkspaceUserId(id, userId)) {
             throw new RuntimeException("Price not found with id: " + id);
         }
         priceRepository.deleteById(id);
