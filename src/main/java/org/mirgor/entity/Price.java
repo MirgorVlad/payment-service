@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mirgor.common.entity.Currency;
+import org.mirgor.common.entity.OperationalEntityType;
 
 import java.math.BigDecimal;
 
@@ -26,7 +28,7 @@ public class Price {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private EntityType entityType;
+    private OperationalEntityType operationalEntityType;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -1,5 +1,7 @@
 package org.mirgor.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -22,7 +24,13 @@ public class WorkspaceDto {
     private String email;
 
     @NotBlank
+    private String host;
+
+    @NotBlank
     @Min(6)
     @Max(100)
     private String password;
+
+    @JsonIgnore
+    private Long userId;
 }

@@ -1,4 +1,4 @@
-package org.mirgor.entity;
+package org.mirgor.common.entity;
 
 public enum Currency {
     UAH,

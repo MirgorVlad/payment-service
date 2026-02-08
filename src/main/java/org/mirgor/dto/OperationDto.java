@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.entity.EntityType;
+import org.mirgor.common.entity.OperationalEntityType;
 
 @Data
 @Builder
@@ -20,7 +20,7 @@ public class OperationDto {
     private Long workspaceId;
 
     @NotNull
-    private EntityType entityType;
+    private OperationalEntityType operationalEntityType;
 
     @NotNull
     @Min(1)

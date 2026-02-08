@@ -19,7 +19,7 @@ public class PriceMapper implements EntityMapper<Price, PriceDto> {
         }
         return Price.builder()
                 .workspace(workspaceOpt.get())
-                .entityType(priceDto.getEntityType())
+                .operationalEntityType(priceDto.getOperationalEntityType())
                 .currency(priceDto.getCurrency())
                 .price(priceDto.getPrice())
                 .build();
@@ -29,7 +29,7 @@ public class PriceMapper implements EntityMapper<Price, PriceDto> {
         return PriceDto.builder()
                 .id(price.getId())
                 .workspaceId(price.getWorkspace().getId())
-                .entityType(price.getEntityType())
+                .operationalEntityType(price.getOperationalEntityType())
                 .currency(price.getCurrency())
                 .price(price.getPrice())
                 .build();

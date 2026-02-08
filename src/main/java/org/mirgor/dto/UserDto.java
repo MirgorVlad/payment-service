@@ -2,11 +2,13 @@ package org.mirgor.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mirgor.common.entity.Role;
 
 import java.time.LocalDateTime;
 
@@ -14,13 +16,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class  UserDto {
 
     private Long id;
-
-    @NotBlank
-    @Size(max = 50)
-    private String username;
 
     @NotBlank
     @Email
@@ -29,6 +27,9 @@ public class UserDto {
 
     @NotBlank
     private String password;
+
+    @NotNull
+    private Role role;
 
     private LocalDateTime createdAt;
 

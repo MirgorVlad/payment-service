@@ -7,6 +7,7 @@ import org.mirgor.service.UserService;
 import org.mirgor.service.mapper.UserMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,14 +20,8 @@ public class UserController {
     private final UserService userService;
     private final UserMapper mapper;
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
-        var user = mapper.fromDto(userDto);
-        var createdUser = userService.createUser(user);
-        return new ResponseEntity<>(mapper.toDto(createdUser), HttpStatus.CREATED);
-    }
-
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         var users = userService.getAllUsers();
         var userDtos = users.stream()
@@ -36,6 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(mapper::toDto)
@@ -44,6 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
         var updatedUser = userService.updateUser(id, mapper.fromDto(userDto));
         var updatedUserDto = mapper.toDto(updatedUser);
@@ -51,6 +48,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

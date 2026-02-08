@@ -3,6 +3,7 @@ package org.mirgor.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.dto.WorkspaceDto;
+import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.WorkspaceService;
 import org.mirgor.service.mapper.WorkspaceMapper;
 import org.springframework.http.HttpStatus;

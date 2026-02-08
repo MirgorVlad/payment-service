@@ -27,8 +27,8 @@ public class OperationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OperationDto>> getAllOperations() {
-        var operations = operationService.getAllOperations();
+    public ResponseEntity<List<OperationDto>> getAllOperations(@RequestParam(required = false) Long workspaceId) {
+        var operations = operationService.getAllOperations(workspaceId);
         var operationDtos = operations.stream()
                 .map(mapper::toDto)
                 .toList();

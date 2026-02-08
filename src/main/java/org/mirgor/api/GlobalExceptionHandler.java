@@ -2,7 +2,7 @@ package org.mirgor.api;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.exception.EmailAlreadyExistsException;
+import org.mirgor.exception.ResourceAlreadyExistsException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,8 +51,8 @@ public class GlobalExceptionHandler {
     }
 
     // Handle email constraint violations
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ApiError> handleUserEmailExistsException(EmailAlreadyExistsException ex) {
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleUserEmailExistsException(ResourceAlreadyExistsException ex) {
         String message = "Email already exists";
         log.error(message, ex);
 

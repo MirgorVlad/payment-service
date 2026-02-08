@@ -19,7 +19,7 @@ public class OperationMapper implements EntityMapper<Operation, OperationDto> {
         }
         return Operation.builder()
                 .workspace(workspaceOpt.get())
-                .entityType(operationDto.getEntityType())
+                .operationalEntityType(operationDto.getOperationalEntityType())
                 .count(operationDto.getCount())
                 .build();
     }
@@ -28,7 +28,7 @@ public class OperationMapper implements EntityMapper<Operation, OperationDto> {
         return OperationDto.builder()
                 .id(operation.getId())
                 .workspaceId(operation.getWorkspace().getId())
-                .entityType(operation.getEntityType())
+                .operationalEntityType(operation.getOperationalEntityType())
                 .count(operation.getCount())
                 .build();
     }

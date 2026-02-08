@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mirgor.common.entity.OperationalEntityType;
 
 @Data
 @Builder
@@ -24,7 +25,7 @@ public class Operation {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private EntityType entityType;
+    private OperationalEntityType operationalEntityType;
 
     @Column(nullable = false)
     private Long count;

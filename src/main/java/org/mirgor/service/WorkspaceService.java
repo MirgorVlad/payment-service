@@ -1,8 +1,12 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.mirgor.entity.User;
 import org.mirgor.entity.Workspace;
 import org.mirgor.repository.WorkspaceRepository;
+import org.mirgor.security.config.SecurityConfig;
+import org.mirgor.security.principal.SecurityUser;
+import org.mirgor.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,42 +21,40 @@ public class WorkspaceService {
 
     @Transactional
     public Workspace createWorkspace(Workspace workspace) {
-        if (workspace.getId() != null && workspaceRepository.existsById(workspace.getId())) {
-            throw new RuntimeException("Workspace ID already exists: " + workspace.getId());
-        }
-
+        var userId = SecurityUtil.getCurrentUserId();
+        workspace.setId(null);
+        workspace.setUser(new User(userId));
         return workspaceRepository.save(workspace);
     }
 
     public Optional<Workspace> getWorkspaceById(Long id) {
-        return workspaceRepository.findById(id);
+        var userId = SecurityUtil.getCurrentUserId();
+        return workspaceRepository.findByIdAndUserId(id, userId);
     }
 
     public List<Workspace> getAllWorkspaces() {
-        return workspaceRepository.findAll();
+        //TODO handle admin role
+        var userId = SecurityUtil.getCurrentUserId();
+        return workspaceRepository.findByUserId(userId);
     }
 
     @Transactional
     public Workspace updateWorkspace(Long id, Workspace updatedWorkspace) {
-        Workspace existingWorkspace = workspaceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Workspace not found with id: " + id));
+        var workspaceOptional = getWorkspaceById(id);
+        var workspace = workspaceOptional.orElseThrow(() ->
+                new IllegalArgumentException(String.format("Workspace with id %s is not found", id)));
 
-        if (updatedWorkspace.getEmail() != null) {
-            existingWorkspace.setEmail(updatedWorkspace.getEmail());
-        }
-        if (updatedWorkspace.getId() != null && !updatedWorkspace.getId().equals(existingWorkspace.getId())) {
-            if (workspaceRepository.existsById(updatedWorkspace.getId())) {
-                throw new RuntimeException("Workspace ID already exists: " + updatedWorkspace.getId());
-            }
-            existingWorkspace.setId(updatedWorkspace.getId());
-        }
+        workspace.setEmail(updatedWorkspace.getEmail());
+        workspace.setPassword(updatedWorkspace.getPassword());
+        workspace.setHost(updatedWorkspace.getHost());
 
-        return workspaceRepository.save(existingWorkspace);
+        return workspaceRepository.save(workspace);
     }
 
     @Transactional
     public void deleteWorkspace(Long id) {
-        if (!workspaceRepository.existsById(id)) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (!workspaceRepository.existsByIdAndUserId(id, userId)) {
             throw new RuntimeException("Workspace not found with id: " + id);
         }
         workspaceRepository.deleteById(id);
