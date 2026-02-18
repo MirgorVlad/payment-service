@@ -12,6 +12,7 @@ import org.mirgor.service.mapper.UserMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,15 +32,19 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> authenticateUser(@RequestBody @Valid AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.email(),
-                        authRequest.password()
-                )
-        );
-        SecurityUser principal = (SecurityUser) authentication.getPrincipal();
-        String token = jwtService.generateToken(principal);
-        return ResponseEntity.ok(new AuthResponse(token));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.email(),
+                            authRequest.password()
+                    )
+            );
+            SecurityUser principal = (SecurityUser) authentication.getPrincipal();
+            String token = jwtService.generateToken(principal);
+            return ResponseEntity.ok(new AuthResponse(token));
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/signup")

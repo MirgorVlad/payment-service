@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
-class WorkspaceControllerTest {
+class SecurityTest {
 
     @Autowired
     private MockMvc mockMvc;
