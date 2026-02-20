@@ -22,19 +22,6 @@ public class PriceService {
         return priceRepository.save(price);
     }
 
-    public Optional<Price> getPriceById(Long id) {
-        var userId = SecurityUtil.getCurrentUserId();
-        return priceRepository.findByIdAndWorkspaceUserId(id, userId);
-    }
-
-    public List<Price> getAllPrices(Long workspaceId) {
-        var userId = SecurityUtil.getCurrentUserId();
-        if (workspaceId != null) {
-            return priceRepository.findByWorkspaceId(workspaceId);
-        }
-        return priceRepository.findByWorkspaceUserId(userId);
-    }
-
     @Transactional
     public Price updatePrice(Long id, Price updatedPrice) {
         var priceOptional = getPriceById(id);
@@ -57,5 +44,18 @@ public class PriceService {
             throw new RuntimeException("Price not found with id: " + id);
         }
         priceRepository.deleteById(id);
+    }
+
+    public Optional<Price> getPriceById(Long id) {
+        var userId = SecurityUtil.getCurrentUserId();
+        return priceRepository.findByIdAndWorkspaceUserId(id, userId);
+    }
+
+    public List<Price> getAllPrices(Long workspaceId) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (workspaceId != null) {
+            return priceRepository.findByWorkspaceId(workspaceId);
+        }
+        return priceRepository.findByWorkspaceUserId(userId);
     }
 }

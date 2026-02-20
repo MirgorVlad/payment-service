@@ -22,19 +22,6 @@ public class OperationService {
         return operationRepository.save(operation);
     }
 
-    public Optional<Operation> getOperationById(Long id) {
-        var userId = SecurityUtil.getCurrentUserId();
-        return operationRepository.findByIdAndWorkspaceUserId(id, userId);
-    }
-
-    public List<Operation> getAllOperations(Long workspaceId) {
-        var userId = SecurityUtil.getCurrentUserId();
-        if (workspaceId != null) {
-            return operationRepository.findByWorkspaceId(workspaceId);
-        }
-        return operationRepository.findByWorkspaceUserId(userId);
-    }
-
     @Transactional
     public Operation updateOperation(Long id, Operation updatedOperation) {
         var operationOptional = getOperationById(id);
@@ -56,5 +43,18 @@ public class OperationService {
             throw new RuntimeException("Operation not found with id: " + id);
         }
         operationRepository.deleteById(id);
+    }
+
+    public Optional<Operation> getOperationById(Long id) {
+        var userId = SecurityUtil.getCurrentUserId();
+        return operationRepository.findByIdAndWorkspaceUserId(id, userId);
+    }
+
+    public List<Operation> getAllOperations(Long workspaceId) {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (workspaceId != null) {
+            return operationRepository.findByWorkspaceId(workspaceId);
+        }
+        return operationRepository.findByWorkspaceUserId(userId);
     }
 }

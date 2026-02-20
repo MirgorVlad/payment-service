@@ -1,11 +1,10 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.mirgor.common.entity.Role;
 import org.mirgor.entity.User;
 import org.mirgor.entity.Workspace;
 import org.mirgor.repository.WorkspaceRepository;
-import org.mirgor.security.config.SecurityConfig;
-import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +32,10 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getAllWorkspaces() {
-        //TODO handle admin role
         var userId = SecurityUtil.getCurrentUserId();
+        if (SecurityUtil.getAuthority().equals(Role.ADMIN.toString())) {
+            return workspaceRepository.findAll();
+        }
         return workspaceRepository.findByUserId(userId);
     }
 

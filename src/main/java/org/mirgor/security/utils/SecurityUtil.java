@@ -9,6 +9,28 @@ public final class SecurityUtil {
     }
 
     public static Long getCurrentUserId() {
+        var principal = getPrincipal();
+
+        if (principal instanceof SecurityUser userDetails) {
+            return userDetails.getId();
+        }
+        throw new IllegalStateException(
+                "Unsupported authentication principal: " + principal.getClass()
+        );
+    }
+
+    public static String getAuthority() {
+        var principal = getPrincipal();
+
+        if (principal instanceof SecurityUser userDetails) {
+            return userDetails.getAuthorities().stream().findFirst().orElseThrow(IllegalArgumentException::new).getAuthority();
+        }
+        throw new IllegalStateException(
+                "Unsupported authentication principal: " + principal.getClass()
+        );
+    }
+
+    private static Object getPrincipal() {
         var authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
@@ -17,14 +39,7 @@ public final class SecurityUtil {
             throw new IllegalStateException("No authenticated user");
         }
 
-        var principal = authentication.getPrincipal();
-
-        if (principal instanceof SecurityUser userDetails) {
-            return userDetails.getId();
-        }
-        throw new IllegalStateException(
-                "Unsupported authentication principal: " + principal.getClass()
-        );
+        return authentication.getPrincipal();
     }
 
 }
