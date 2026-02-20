@@ -26,19 +26,6 @@ public class WorkspaceService {
         return workspaceRepository.save(workspace);
     }
 
-    public Optional<Workspace> getWorkspaceById(Long id) {
-        var userId = SecurityUtil.getCurrentUserId();
-        return workspaceRepository.findByIdAndUserId(id, userId);
-    }
-
-    public List<Workspace> getAllWorkspaces() {
-        var userId = SecurityUtil.getCurrentUserId();
-        if (SecurityUtil.getAuthority().equals(Role.ADMIN.toString())) {
-            return workspaceRepository.findAll();
-        }
-        return workspaceRepository.findByUserId(userId);
-    }
-
     @Transactional
     public Workspace updateWorkspace(Long id, Workspace updatedWorkspace) {
         var workspaceOptional = getWorkspaceById(id);
@@ -48,6 +35,7 @@ public class WorkspaceService {
         workspace.setEmail(updatedWorkspace.getEmail());
         workspace.setPassword(updatedWorkspace.getPassword());
         workspace.setHost(updatedWorkspace.getHost());
+        workspace.setSyncStatus(updatedWorkspace.getSyncStatus());
 
         return workspaceRepository.save(workspace);
     }
@@ -59,5 +47,18 @@ public class WorkspaceService {
             throw new RuntimeException("Workspace not found with id: " + id);
         }
         workspaceRepository.deleteById(id);
+    }
+
+    public Optional<Workspace> getWorkspaceById(Long id) {
+        var userId = SecurityUtil.getCurrentUserId();
+        return workspaceRepository.findByIdAndUserId(id, userId);
+    }
+
+    public List<Workspace> getAllWorkspaces() {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (SecurityUtil.getAuthority().equals(Role.ADMIN.toString())) {
+            return workspaceRepository.findAll();
+        }
+        return workspaceRepository.findByUserId(userId);
     }
 }
