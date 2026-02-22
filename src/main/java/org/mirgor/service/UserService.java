@@ -2,11 +2,8 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.entity.User;
-import org.mirgor.exception.ResourceAlreadyExistsException;
-import org.mirgor.repository.UserRepository;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.mirgor.service.dao.DaoUserService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,29 +12,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final DaoUserService daoUserService;
 
-    @Transactional
     public User createUser(User user) {
-        try {
-            user.setId(null);
-            return userRepository.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResourceAlreadyExistsException(user, "email", user.getEmail());
-        }
+        user.setId(null);
+        return daoUserService.saveUser(user);
     }
 
     public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        return daoUserService.findUserById(id);
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return daoUserService.findAllUsers();
     }
 
-    @Transactional
     public User updateUser(Long id, User updatedUser) {
-        User existingUser = userRepository.findById(id)
+        User existingUser = daoUserService.findUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         if (updatedUser.getEmail() != null) {
@@ -47,14 +38,13 @@ public class UserService {
             existingUser.setPassword(updatedUser.getPassword());
         }
 
-        return userRepository.save(existingUser);
+        return daoUserService.saveUser(existingUser);
     }
 
-    @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
+        if (!daoUserService.existsById(id)) {
             throw new RuntimeException("User not found with id: " + id);
         }
-        userRepository.deleteById(id);
+        daoUserService.deleteUser(id);
     }
 }

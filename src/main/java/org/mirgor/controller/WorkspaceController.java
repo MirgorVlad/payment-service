@@ -41,10 +41,11 @@ public class WorkspaceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WorkspaceDto> getWorkspaceById(@PathVariable Long id) {
-        return workspaceService.getWorkspaceById(id)
-                .map(mapper::toDto)
-                .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            return ResponseEntity.ok(mapper.toDto(workspaceService.getWorkspaceById(id)));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PutMapping("/{id}")
