@@ -1,7 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.entity.Role;
+import org.mirgor.common.constant.Role;
 import org.mirgor.entity.User;
 import org.mirgor.entity.Workspace;
 import org.mirgor.security.utils.SecurityUtil;
@@ -9,7 +9,6 @@ import org.mirgor.service.dao.DaoWorkspaceService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

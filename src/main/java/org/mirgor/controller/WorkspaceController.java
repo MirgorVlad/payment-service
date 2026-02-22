@@ -2,11 +2,13 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.dto.workspace.WorkspaceDto;
+import org.mirgor.common.dto.workspace.WorkspaceDto;
 import org.mirgor.service.WorkspaceService;
+import org.mirgor.service.WorkspaceSynchronizationService;
 import org.mirgor.service.mapper.WorkspaceMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/workspaces")
 public class WorkspaceController {
 
+    private final WorkspaceSynchronizationService workspaceSynchronizationService;
     private final WorkspaceService workspaceService;
     private final WorkspaceMapper mapper;
 
@@ -28,6 +31,13 @@ public class WorkspaceController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PostMapping("/sync")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<WorkspaceDto> syncWorkspaces() {
+        workspaceSynchronizationService.syncAllWorkspaces();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

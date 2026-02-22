@@ -1,4 +1,4 @@
-package org.mirgor.common.entity;
+package org.mirgor.common.constant;
 
 public enum OperationalEntityType {
     DEVICE,

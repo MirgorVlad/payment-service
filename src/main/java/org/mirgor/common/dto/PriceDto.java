@@ -1,4 +1,4 @@
-package org.mirgor.dto;
+package org.mirgor.common.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.entity.Currency;
-import org.mirgor.common.entity.OperationalEntityType;
+import org.mirgor.common.constant.Currency;
+import org.mirgor.common.constant.OperationalEntityType;
 
 import java.math.BigDecimal;
 

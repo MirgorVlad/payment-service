@@ -1,14 +1,16 @@
 package org.mirgor.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.common.entity.SyncStatus;
-import org.mirgor.common.entity.WorkspaceConstants;
-import org.mirgor.dto.workspace.WorkspacePingRequest;
+import org.mirgor.common.constant.SyncStatus;
+import org.mirgor.common.constant.WorkspaceConstants;
+import org.mirgor.common.dto.workspace.WorkspacePingRequest;
 import org.mirgor.entity.Workspace;
 import org.mirgor.exception.WorkspaceAvailabilityException;
+import org.mirgor.service.dao.DaoWorkspaceService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -26,15 +28,28 @@ public class WorkspaceSynchronizationService {
     private int SYNC_EXECUTOR_THREADS;
 
     private final WebClient webClient;
-    private final WorkspaceService workspaceService;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(SYNC_EXECUTOR_THREADS);
+    private final DaoWorkspaceService daoWorkspaceService;
+    private ExecutorService executorService;
 
-    public void syncWorkspace(Workspace workspace){
+    @PostConstruct
+    void init() {
+        executorService = Executors.newFixedThreadPool(SYNC_EXECUTOR_THREADS);
+    }
+
+    @Scheduled(fixedRateString = "${workspace.sync.rate_millis: 60000}")
+    public void syncAllWorkspaces() {
+        var workspaceList = daoWorkspaceService.findAllWorkspaces();
+        workspaceList.forEach(this::syncWorkspace);
+    }
+
+    private void syncWorkspace(Workspace workspace) {
         var pingFuture = pingWorkspace(workspace);
         pingFuture.whenCompleteAsync((result, ex) -> {
             var status = ex == null ? SyncStatus.ACTIVE : SyncStatus.INACTIVE;
             workspace.setSyncStatus(status);
-            workspaceService.updateWorkspace(workspace.getId(), workspace); //TODO handle service role check
+            daoWorkspaceService.saveWorkspace(workspace);
+
+            log.info("Workspace [{}] SYNCHRONIZATION: {}", workspace.getId(), status);
         }, executorService);
     }
 
@@ -44,7 +59,7 @@ public class WorkspaceSynchronizationService {
                 .uri(String.format(WorkspaceConstants.WORKSPACE_PING_URL_PATTERN, workspace.getHost()))
                 .bodyValue(new WorkspacePingRequest(workspace.getEmail(), workspace.getPassword()))
                 .retrieve()
-                .onStatus(HttpStatusCode::is2xxSuccessful, resp ->
+                .onStatus(r -> !r.is2xxSuccessful(), resp ->
                         Mono.error(new WorkspaceAvailabilityException("Workspace ping failed")))
                 .bodyToMono(Object.class)
                 .toFuture();

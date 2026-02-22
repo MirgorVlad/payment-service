@@ -1,7 +1,7 @@
-package org.mirgor.dto.workspace;
+package org.mirgor.common.dto.workspace;
 
 public record WorkspacePingRequest(
-        String login,
+        String username,
         String password
 ) {
 }
