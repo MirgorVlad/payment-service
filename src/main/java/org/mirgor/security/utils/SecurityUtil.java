@@ -1,5 +1,6 @@
 package org.mirgor.security.utils;
 
+import org.mirgor.common.entity.Role;
 import org.mirgor.security.principal.SecurityUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -9,6 +10,30 @@ public final class SecurityUtil {
     }
 
     public static Long getCurrentUserId() {
+        var principal = getPrincipal();
+
+        if (principal instanceof SecurityUser userDetails) {
+            return userDetails.getId();
+        }
+        throw new IllegalStateException(
+                "Unsupported authentication principal: " + principal.getClass()
+        );
+    }
+
+    public static Role getCurrentUserRole() {
+        var principal = getPrincipal();
+
+        if (principal instanceof SecurityUser userDetails) {
+            var authority = userDetails.getAuthorities().stream().findFirst().orElseThrow(IllegalArgumentException::new)
+                    .getAuthority();
+            return Role.valueOf(authority);
+        }
+        throw new IllegalStateException(
+                "Unsupported authentication principal: " + principal.getClass()
+        );
+    }
+
+    private static Object getPrincipal() {
         var authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
@@ -17,14 +42,7 @@ public final class SecurityUtil {
             throw new IllegalStateException("No authenticated user");
         }
 
-        var principal = authentication.getPrincipal();
-
-        if (principal instanceof SecurityUser userDetails) {
-            return userDetails.getId();
-        }
-        throw new IllegalStateException(
-                "Unsupported authentication principal: " + principal.getClass()
-        );
+        return authentication.getPrincipal();
     }
 
 }

@@ -1,14 +1,12 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.mirgor.common.entity.Role;
 import org.mirgor.entity.User;
 import org.mirgor.entity.Workspace;
-import org.mirgor.repository.WorkspaceRepository;
-import org.mirgor.security.config.SecurityConfig;
-import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.security.utils.SecurityUtil;
+import org.mirgor.service.dao.DaoWorkspaceService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,46 +15,59 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WorkspaceService {
 
-    private final WorkspaceRepository workspaceRepository;
+    private final DaoWorkspaceService daoWorkspaceService;
 
-    @Transactional
     public Workspace createWorkspace(Workspace workspace) {
         var userId = SecurityUtil.getCurrentUserId();
         workspace.setId(null);
         workspace.setUser(new User(userId));
-        return workspaceRepository.save(workspace);
+        return daoWorkspaceService.saveWorkspace(workspace);
     }
 
-    public Optional<Workspace> getWorkspaceById(Long id) {
-        var userId = SecurityUtil.getCurrentUserId();
-        return workspaceRepository.findByIdAndUserId(id, userId);
-    }
-
-    public List<Workspace> getAllWorkspaces() {
-        //TODO handle admin role
-        var userId = SecurityUtil.getCurrentUserId();
-        return workspaceRepository.findByUserId(userId);
-    }
-
-    @Transactional
     public Workspace updateWorkspace(Long id, Workspace updatedWorkspace) {
-        var workspaceOptional = getWorkspaceById(id);
-        var workspace = workspaceOptional.orElseThrow(() ->
-                new IllegalArgumentException(String.format("Workspace with id %s is not found", id)));
+        var userId = SecurityUtil.getCurrentUserId();
+        var workspaceOptional = daoWorkspaceService.findWorkspaceById(id);
+        var workspace = workspaceOptional.orElse(null);
+
+        if (workspace == null || !workspace.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException(String.format("Workspace with id %s is not found", id));
+        }
 
         workspace.setEmail(updatedWorkspace.getEmail());
         workspace.setPassword(updatedWorkspace.getPassword());
         workspace.setHost(updatedWorkspace.getHost());
+        workspace.setSyncStatus(updatedWorkspace.getSyncStatus());
 
-        return workspaceRepository.save(workspace);
+        return daoWorkspaceService.saveWorkspace(workspace);
     }
 
-    @Transactional
     public void deleteWorkspace(Long id) {
         var userId = SecurityUtil.getCurrentUserId();
-        if (!workspaceRepository.existsByIdAndUserId(id, userId)) {
-            throw new RuntimeException("Workspace not found with id: " + id);
+        if (!daoWorkspaceService.existsByIdAndUserId(id, userId)) {
+            throw new IllegalArgumentException("Workspace not found with id: " + id);
         }
-        workspaceRepository.deleteById(id);
+        daoWorkspaceService.deleteWorkspace(id);
+    }
+
+    public Workspace getWorkspaceById(Long id) {
+        var userId = SecurityUtil.getCurrentUserId();
+        var workspace = daoWorkspaceService.findWorkspaceById(id).orElse(null);
+
+        if (workspace != null) {
+            if (SecurityUtil.getCurrentUserRole().equals(Role.ADMIN)) {
+                return workspace;
+            } else if (workspace.getUser().getId().equals(userId)) {
+                return workspace;
+            }
+        }
+        throw new IllegalArgumentException("Workspace not found with id: " + id);
+    }
+
+    public List<Workspace> getAllWorkspaces() {
+        var userId = SecurityUtil.getCurrentUserId();
+        if (SecurityUtil.getCurrentUserRole().equals(Role.ADMIN)) {
+            return daoWorkspaceService.findAllWorkspaces();
+        }
+        return daoWorkspaceService.findAllWorkspacesByUserId(userId);
     }
 }
