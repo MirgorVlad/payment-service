@@ -13,7 +13,7 @@ import org.mirgor.common.constant.OperationalEntityType;
 @AllArgsConstructor
 @Entity
 @Table(name = "operation")
-public class Operation {
+public class Operation { //TODO rename (WorkspaceSnapshot)
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

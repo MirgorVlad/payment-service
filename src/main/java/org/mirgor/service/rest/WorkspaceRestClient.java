@@ -5,6 +5,7 @@ import org.mirgor.common.constant.OperationalEntityType;
 import org.mirgor.common.constant.WorkspaceConstants;
 import org.mirgor.common.dto.rest.EntityRequestContext;
 import org.mirgor.common.dto.rest.PageResponse;
+import org.mirgor.common.dto.rest.WorkspaceLoginResponse;
 import org.mirgor.common.dto.workspace.WorkspacePingRequest;
 import org.mirgor.entity.Workspace;
 import org.mirgor.exception.WorkspaceAvailabilityException;
@@ -29,15 +30,14 @@ public class WorkspaceRestClient {
 
     private final WebClient webClient;
 
-    //TODO return token
-    public CompletableFuture<?> pingWorkspace(Workspace workspace) {
+    public CompletableFuture<WorkspaceLoginResponse> loginWorkspace(Workspace workspace) {
         return webClient.post()
                 .uri(String.format(WorkspaceConstants.WORKSPACE_PING_URL_PATTERN, workspace.getHost()))
                 .bodyValue(new WorkspacePingRequest(workspace.getEmail(), workspace.getPassword()))
                 .retrieve()
                 .onStatus(r -> !r.is2xxSuccessful(), resp ->
                         Mono.error(new WorkspaceAvailabilityException(String.format("Workspace [%s] ping failed", workspace.getId()))))
-                .bodyToMono(Object.class)
+                .bodyToMono(WorkspaceLoginResponse.class)
                 .retryWhen(Retry.backoff(MAX_ATTEMPTS, Duration.ofSeconds(INITIAL_DELAY)))
                 .toFuture();
     }

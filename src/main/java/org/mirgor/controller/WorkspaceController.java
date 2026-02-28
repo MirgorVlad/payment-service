@@ -3,6 +3,7 @@ package org.mirgor.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.dto.workspace.WorkspaceDto;
+import org.mirgor.entity.Operation;
 import org.mirgor.service.WorkspaceService;
 import org.mirgor.service.WorkspaceSynchronizationService;
 import org.mirgor.service.mapper.WorkspaceMapper;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +40,12 @@ public class WorkspaceController {
     public ResponseEntity<WorkspaceDto> syncWorkspaces() {
         workspaceSynchronizationService.syncAllWorkspaces();
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/snapshot")
+    @PreAuthorize("hasRole('ADMIN')")
+    public CompletableFuture<List<Operation>> createWorkspacesSnapshot() {
+        return workspaceSynchronizationService.fetchWorkspacesUsageSnapshot();
     }
 
     @GetMapping
