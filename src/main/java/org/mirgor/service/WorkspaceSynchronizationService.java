@@ -13,10 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -54,6 +51,7 @@ public class WorkspaceSynchronizationService {
 
         var workspaceList = daoWorkspaceService.findAllWorkspaces();
         List<CompletableFuture<List<Snapshot>>> snapshotSaveFutureList = workspaceList.stream().map(workspace -> {
+            var syncId = UUID.randomUUID();
             var countFuture = countWorkspaceEntities(workspace);
             return countFuture
                     .exceptionally(ex -> {
@@ -63,7 +61,7 @@ public class WorkspaceSynchronizationService {
                     .thenApplyAsync(countMap ->
                             countMap.entrySet().stream()
                                     .map(entry -> {
-                                        var snapshot = buildSnapshot(workspace, entry.getKey(), entry.getValue());
+                                        var snapshot = buildSnapshot(workspace, entry.getKey(), entry.getValue(), syncId);
                                         return snapshotService.createSnapshot(snapshot);
                                     }).toList(), dbTaskExecutor);
         }).toList();
@@ -107,8 +105,9 @@ public class WorkspaceSynchronizationService {
         }, dbTaskExecutor);
     }
 
-    private static Snapshot buildSnapshot(Workspace workspace, SnapshotEntityType entity, Long count) {
+    private static Snapshot buildSnapshot(Workspace workspace, SnapshotEntityType entity, Long count, UUID syncId) {
         return Snapshot.builder()
+                .syncId(syncId)
                 .snapshotEntityType(entity)
                 .count(count)
                 .workspaceId(workspace.getId())

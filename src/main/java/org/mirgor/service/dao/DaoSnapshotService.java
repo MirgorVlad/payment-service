@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,22 +21,19 @@ public class DaoSnapshotService {
     private final SnapshotMapper snapshotMapper;
 
     @Transactional
-    public Snapshot saveSnapshot(Snapshot dto) {
-        var workspaceEntity = daoWorkspaceService.findWorkspaceEntityById(dto.getWorkspaceId())
-                .orElseThrow(() -> new IllegalArgumentException("Workspace not found: " + dto.getWorkspaceId()));
+    public Snapshot saveSnapshot(Snapshot snapshot) {
+        var workspaceEntity = daoWorkspaceService.findWorkspaceEntityById(snapshot.getWorkspaceId())
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found: " + snapshot.getWorkspaceId()));
         SnapshotEntity entity;
-        if (dto.getId() != null) {
-            entity = snapshotRepository.findById(dto.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Snapshot not found: " + dto.getId()));
+        if (snapshot.getId() != null) {
+            entity = snapshotRepository.findById(snapshot.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Snapshot not found: " + snapshot.getId()));
             entity.setWorkspace(workspaceEntity);
-            entity.setSnapshotEntityType(dto.getSnapshotEntityType());
-            entity.setCount(dto.getCount());
+            entity.setSnapshotEntityType(snapshot.getSnapshotEntityType());
+            entity.setCount(snapshot.getCount());
         } else {
-            entity = SnapshotEntity.builder()
-                    .workspace(workspaceEntity)
-                    .snapshotEntityType(dto.getSnapshotEntityType())
-                    .count(dto.getCount())
-                    .build();
+            entity = snapshotMapper.fromDto(snapshot);
+            entity.setWorkspace(workspaceEntity);
         }
         return snapshotMapper.toDto(snapshotRepository.save(entity));
     }
@@ -43,6 +41,12 @@ public class DaoSnapshotService {
     @Transactional
     public void deleteSnapshot(Long id) {
         snapshotRepository.deleteById(id);
+    }
+
+    public List<Snapshot> findBySyncId(UUID syncId) {
+        return snapshotRepository.findBySyncId(syncId).stream()
+                .map(snapshotMapper::toDto)
+                .toList();
     }
 
     public Optional<Snapshot> findSnapshotById(Long id) {

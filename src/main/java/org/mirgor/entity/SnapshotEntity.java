@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.mirgor.common.constant.SnapshotEntityType;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -20,6 +21,9 @@ public class SnapshotEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(updatable = false, unique = true)
+    private UUID syncId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)

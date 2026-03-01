@@ -27,6 +27,7 @@ public class SnapshotService {
         var existing = getSnapshotById(id)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Snapshot with id %s is not found", id)));
 
+        log.debug("Update snapshot {} with id {}", updatedSnapshot, id);
         existing.setWorkspaceId(updatedSnapshot.getWorkspaceId());
         existing.setSnapshotEntityType(updatedSnapshot.getSnapshotEntityType());
         existing.setCount(updatedSnapshot.getCount());
@@ -39,6 +40,7 @@ public class SnapshotService {
         if (!daoSnapshotService.existsByIdAndWorkspaceUserId(id, userId)) {
             throw new IllegalArgumentException(String.format("Snapshot with id %s is not found", id));
         }
+        log.debug("Delete snapshot with id {}", id);
         daoSnapshotService.deleteSnapshot(id);
     }
 
@@ -54,4 +56,5 @@ public class SnapshotService {
         }
         return daoSnapshotService.findByWorkspaceUserId(userId);
     }
+
 }

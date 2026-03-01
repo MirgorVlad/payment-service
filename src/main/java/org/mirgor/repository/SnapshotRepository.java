@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface SnapshotRepository extends JpaRepository<SnapshotEntity, Long> {
@@ -13,6 +14,8 @@ public interface SnapshotRepository extends JpaRepository<SnapshotEntity, Long> 
     boolean existsById(Long id);
 
     boolean existsByIdAndWorkspaceUserId(Long id, Long userId);
+
+    List<SnapshotEntity> findBySyncId(UUID syncId);
 
     List<SnapshotEntity> findByWorkspaceUserId(Long userId);
 

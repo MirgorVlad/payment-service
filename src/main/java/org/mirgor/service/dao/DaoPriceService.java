@@ -20,24 +20,20 @@ public class DaoPriceService {
     private final PriceMapper priceMapper;
 
     @Transactional
-    public Price savePrice(Price dto) {
-        var workspaceEntity = daoWorkspaceService.findWorkspaceEntityById(dto.getWorkspaceId())
-                .orElseThrow(() -> new IllegalArgumentException("Workspace not found: " + dto.getWorkspaceId()));
+    public Price savePrice(Price price) {
+        var workspaceEntity = daoWorkspaceService.findWorkspaceEntityById(price.getWorkspaceId())
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found: " + price.getWorkspaceId()));
         PriceEntity entity;
-        if (dto.getId() != null) {
-            entity = priceRepository.findById(dto.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Price not found: " + dto.getId()));
+        if (price.getId() != null) {
+            entity = priceRepository.findById(price.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Price not found: " + price.getId()));
             entity.setWorkspace(workspaceEntity);
-            entity.setSnapshotEntityType(dto.getSnapshotEntityType());
-            entity.setCurrency(dto.getCurrency());
-            entity.setPrice(dto.getPrice());
+            entity.setSnapshotEntityType(price.getSnapshotEntityType());
+            entity.setCurrency(price.getCurrency());
+            entity.setPrice(price.getPrice());
         } else {
-            entity = PriceEntity.builder()
-                    .workspace(workspaceEntity)
-                    .snapshotEntityType(dto.getSnapshotEntityType())
-                    .currency(dto.getCurrency())
-                    .price(dto.getPrice())
-                    .build();
+            entity = priceMapper.fromDto(price);
+            entity.setWorkspace(workspaceEntity);
         }
         return priceMapper.toDto(priceRepository.save(entity));
     }

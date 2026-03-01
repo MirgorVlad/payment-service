@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.mirgor.common.constant.SnapshotEntityType;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,6 +19,9 @@ import java.time.LocalDateTime;
 public class Snapshot {
 
     private Long id;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID syncId;
 
     @NotNull
     private Long workspaceId;
