@@ -13,7 +13,7 @@ import org.mirgor.common.constant.OperationalEntityType;
 @AllArgsConstructor
 @Entity
 @Table(name = "operation")
-public class Operation { //TODO rename (WorkspaceSnapshot)
+public class Operation { //TODO rename (Workspace Snapshot)
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +30,6 @@ public class Operation { //TODO rename (WorkspaceSnapshot)
     @Column(nullable = false)
     private Long count;
 
+    //TODO make snapshot time
 
 }

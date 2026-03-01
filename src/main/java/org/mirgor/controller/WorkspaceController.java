@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,8 +44,8 @@ public class WorkspaceController {
 
     @PostMapping("/snapshot")
     @PreAuthorize("hasRole('ADMIN')")
-    public CompletableFuture<List<Operation>> createWorkspacesSnapshot() {
-        return workspaceSynchronizationService.fetchWorkspacesUsageSnapshot();
+    public List<Operation> createWorkspacesSnapshot() throws ExecutionException, InterruptedException {
+        return workspaceSynchronizationService.fetchWorkspacesUsageSnapshot().get();
     }
 
     @GetMapping

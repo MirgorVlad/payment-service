@@ -45,6 +45,6 @@ public class Workspace {
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> priceList;
 
-
+    //TODO add  last sync Ts
 }
 

@@ -15,6 +15,7 @@ import java.util.List;
 public class WorkspaceService {
 
     private final DaoWorkspaceService daoWorkspaceService;
+    private final WorkspaceSynchronizationService workspaceSynchronizationService;
 
     public Workspace createWorkspace(Workspace workspace) {
         var userId = SecurityUtil.getCurrentUserId();
@@ -69,4 +70,6 @@ public class WorkspaceService {
         }
         return daoWorkspaceService.findAllWorkspacesByUserId(userId);
     }
+
+
 }

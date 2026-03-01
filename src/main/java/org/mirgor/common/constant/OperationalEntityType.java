@@ -4,5 +4,6 @@ public enum OperationalEntityType {
     DEVICE,
     ASSET,
     CUSTOMER,
-    TELEMETRY
+//    TELEMETRY
+    ;
 }
