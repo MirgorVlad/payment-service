@@ -1,27 +1,31 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.dto.workspace.WorkspaceDto;
-import org.mirgor.entity.Workspace;
+import org.mirgor.common.dto.workspace.Workspace;
+import org.mirgor.entity.UserEntity;
+import org.mirgor.entity.WorkspaceEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WorkspaceMapper implements EntityMapper<Workspace, WorkspaceDto> {
+public class WorkspaceMapper implements EntityMapper<WorkspaceEntity, Workspace> {
 
-    public Workspace fromDto(WorkspaceDto workspaceDto) {
-        return Workspace.builder()
-                .email(workspaceDto.getEmail())
-                .host(workspaceDto.getHost())
-                .password(workspaceDto.getPassword())
-                .build();
-    }
-
-    public WorkspaceDto toDto(Workspace workspace) {
-        return WorkspaceDto.builder()
+    public WorkspaceEntity fromDto(Workspace workspace) {
+        return WorkspaceEntity.builder()
                 .id(workspace.getId())
                 .email(workspace.getEmail())
                 .host(workspace.getHost())
                 .password(workspace.getPassword())
-                .syncStatus(workspace.getSyncStatus())
+                .user(workspace.getUserId() != null ? new UserEntity(workspace.getUserId()) : null)
+                .build();
+    }
+
+    public Workspace toDto(WorkspaceEntity workspaceEntity) {
+        return Workspace.builder()
+                .id(workspaceEntity.getId())
+                .email(workspaceEntity.getEmail())
+                .host(workspaceEntity.getHost())
+                .password(workspaceEntity.getPassword())
+                .syncStatus(workspaceEntity.getSyncStatus())
+                .userId(workspaceEntity.getUser() != null ? workspaceEntity.getUser().getId() : null)
                 .build();
     }
 }

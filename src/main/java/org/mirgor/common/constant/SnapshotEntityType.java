@@ -1,6 +1,6 @@
 package org.mirgor.common.constant;
 
-public enum OperationalEntityType {
+public enum SnapshotEntityType {
     DEVICE,
     ASSET,
     CUSTOMER,

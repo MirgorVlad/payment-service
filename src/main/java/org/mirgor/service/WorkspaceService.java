@@ -2,8 +2,7 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.constant.Role;
-import org.mirgor.entity.User;
-import org.mirgor.entity.Workspace;
+import org.mirgor.common.dto.workspace.Workspace;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoWorkspaceService;
 import org.springframework.stereotype.Service;
@@ -15,30 +14,29 @@ import java.util.List;
 public class WorkspaceService {
 
     private final DaoWorkspaceService daoWorkspaceService;
-    private final WorkspaceSynchronizationService workspaceSynchronizationService;
 
     public Workspace createWorkspace(Workspace workspace) {
         var userId = SecurityUtil.getCurrentUserId();
         workspace.setId(null);
-        workspace.setUser(new User(userId));
+        workspace.setUserId(userId);
         return daoWorkspaceService.saveWorkspace(workspace);
     }
 
     public Workspace updateWorkspace(Long id, Workspace updatedWorkspace) {
         var userId = SecurityUtil.getCurrentUserId();
-        var workspaceOptional = daoWorkspaceService.findWorkspaceById(id);
-        var workspace = workspaceOptional.orElse(null);
+        var existing = daoWorkspaceService.findWorkspaceById(id)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Workspace with id %s is not found", id)));
 
-        if (workspace == null || !workspace.getUser().getId().equals(userId)) {
+        if (!existing.getUserId().equals(userId)) {
             throw new IllegalArgumentException(String.format("Workspace with id %s is not found", id));
         }
 
-        workspace.setEmail(updatedWorkspace.getEmail());
-        workspace.setPassword(updatedWorkspace.getPassword());
-        workspace.setHost(updatedWorkspace.getHost());
-        workspace.setSyncStatus(updatedWorkspace.getSyncStatus());
+        existing.setEmail(updatedWorkspace.getEmail());
+        existing.setPassword(updatedWorkspace.getPassword());
+        existing.setHost(updatedWorkspace.getHost());
+        existing.setSyncStatus(updatedWorkspace.getSyncStatus());
 
-        return daoWorkspaceService.saveWorkspace(workspace);
+        return daoWorkspaceService.saveWorkspace(existing);
     }
 
     public void deleteWorkspace(Long id) {
@@ -56,7 +54,7 @@ public class WorkspaceService {
         if (workspace != null) {
             if (SecurityUtil.getCurrentUserRole().equals(Role.ADMIN)) {
                 return workspace;
-            } else if (workspace.getUser().getId().equals(userId)) {
+            } else if (workspace.getUserId().equals(userId)) {
                 return workspace;
             }
         }
@@ -70,6 +68,4 @@ public class WorkspaceService {
         }
         return daoWorkspaceService.findAllWorkspacesByUserId(userId);
     }
-
-
 }

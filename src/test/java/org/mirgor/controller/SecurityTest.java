@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mirgor.common.constant.Role;
 import org.mirgor.common.dto.auth.AuthRequest;
 import org.mirgor.common.dto.auth.AuthResponse;
-import org.mirgor.common.dto.UserDto;
+import org.mirgor.common.dto.User;
 import org.mirgor.security.principal.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +55,7 @@ class SecurityTest {
     }
 
     private String signUpAndGetToken(String email, String password, Role role) throws Exception {
-        UserDto userDto = UserDto.builder()
+        User user = User.builder()
                 .email(email)
                 .password(password)
                 .role(role)
@@ -63,7 +63,7 @@ class SecurityTest {
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isCreated());
 
         AuthRequest authRequest = new AuthRequest(email, password);
@@ -86,7 +86,7 @@ class SecurityTest {
         @Test
         @DisplayName("POST /api/auth/signup - should be accessible without authentication")
         void signupShouldBePublic() throws Exception {
-            UserDto userDto = UserDto.builder()
+            User user = User.builder()
                     .email("public-signup@mail.com")
                     .password("password123")
                     .role(Role.USER)
@@ -94,7 +94,7 @@ class SecurityTest {
 
             mockMvc.perform(post("/api/auth/signup")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(userDto)))
+                            .content(objectMapper.writeValueAsString(user)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.email").value("public-signup@mail.com"));
         }
@@ -102,7 +102,7 @@ class SecurityTest {
         @Test
         @DisplayName("POST /api/auth/signin - should be accessible without authentication")
         void signinShouldBePublic() throws Exception {
-            UserDto userDto = UserDto.builder()
+            User user = User.builder()
                     .email("public-signin@mail.com")
                     .password("password123")
                     .role(Role.USER)
@@ -110,7 +110,7 @@ class SecurityTest {
 
             mockMvc.perform(post("/api/auth/signup")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(userDto)))
+                            .content(objectMapper.writeValueAsString(user)))
                     .andExpect(status().isCreated());
 
             AuthRequest authRequest = new AuthRequest("public-signin@mail.com", "password123");
@@ -153,9 +153,9 @@ class SecurityTest {
         }
 
         @Test
-        @DisplayName("GET /api/operations - unauthenticated should return 401")
-        void operationsShouldRequireAuth() throws Exception {
-            mockMvc.perform(get("/api/operations"))
+        @DisplayName("GET /api/snapshots - unauthenticated should return 401")
+        void snapshotsShouldRequireAuth() throws Exception {
+            mockMvc.perform(get("/api/snapshots"))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -196,7 +196,7 @@ class SecurityTest {
 
     @Nested
     @DisplayName("UserController - ADMIN Role Required")
-    class UserControllerRoleTest {
+    class UserEntityControllerRoleTest {
 
         @Test
         @DisplayName("GET /api/users - USER role should return 403")
@@ -224,7 +224,7 @@ class SecurityTest {
             SecurityUser regularUser = new SecurityUser(1L, "user@mail.com", "pass",
                     List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-            UserDto userDto = UserDto.builder()
+            User user = User.builder()
                     .email("updated@mail.com")
                     .password("newpass")
                     .role(Role.USER)
@@ -233,7 +233,7 @@ class SecurityTest {
             mockMvc.perform(put("/api/users/1")
                             .with(user(regularUser))
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(userDto)))
+                            .content(objectMapper.writeValueAsString(user)))
                     .andExpect(status().isForbidden());
         }
 
@@ -258,7 +258,7 @@ class SecurityTest {
         }
     }
 
-    // ==================== AUTHENTICATED ACCESS (Workspace, Operation, Price) ====================
+    // ==================== AUTHENTICATED ACCESS (Workspace, Snapshot, Price) ====================
 
     @Nested
     @DisplayName("Authenticated Access - Any Role Allowed")
@@ -275,12 +275,12 @@ class SecurityTest {
         }
 
         @Test
-        @DisplayName("GET /api/operations - authenticated USER should return 200")
-        void authenticatedUserCanAccessOperations() throws Exception {
+        @DisplayName("GET /api/snapshots - authenticated USER should return 200")
+        void authenticatedUserCanAccessSnapshots() throws Exception {
             SecurityUser regularUser = new SecurityUser(1L, "user@mail.com", "pass",
                     List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-            mockMvc.perform(get("/api/operations").with(user(regularUser)))
+            mockMvc.perform(get("/api/snapshots").with(user(regularUser)))
                     .andExpect(status().isOk());
         }
 

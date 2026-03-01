@@ -1,6 +1,7 @@
 package org.mirgor.common.dto.workspace;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import org.mirgor.common.constant.SyncStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkspaceDto {
+public class Workspace {
 
     private Long id;
 
@@ -28,7 +29,7 @@ public class WorkspaceDto {
     @Max(100)
     private String password;
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private SyncStatus syncStatus;
 
     @JsonIgnore

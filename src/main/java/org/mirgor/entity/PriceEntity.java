@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mirgor.common.constant.Currency;
-import org.mirgor.common.constant.OperationalEntityType;
+import org.mirgor.common.constant.SnapshotEntityType;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name = "price")
-public class Price {
+public class PriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,11 @@ public class Price {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
-    private Workspace workspace;
+    private WorkspaceEntity workspace;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private OperationalEntityType operationalEntityType;
+    private SnapshotEntityType snapshotEntityType;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

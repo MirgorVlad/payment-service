@@ -8,7 +8,7 @@ public final class WorkspaceConstants {
     private WorkspaceConstants() {
     }
 
-    public static Map<OperationalEntityType, String> fetchEndpointMap;
+    public static Map<SnapshotEntityType, String> fetchEndpointMap;
 
     public static final String CUSTOMERS_URL_PATTERN = "/api/customerInfos/all";
     public static final String DEVICES_URL_PATTERN = "/api/deviceInfos/all";
@@ -17,8 +17,8 @@ public final class WorkspaceConstants {
 
     static {
         fetchEndpointMap = new HashMap<>();
-        fetchEndpointMap.put(OperationalEntityType.CUSTOMER, CUSTOMERS_URL_PATTERN);
-        fetchEndpointMap.put(OperationalEntityType.DEVICE, DEVICES_URL_PATTERN);
-        fetchEndpointMap.put(OperationalEntityType.ASSET, ASSETS_URL_PATTERN);
+        fetchEndpointMap.put(SnapshotEntityType.CUSTOMER, CUSTOMERS_URL_PATTERN);
+        fetchEndpointMap.put(SnapshotEntityType.DEVICE, DEVICES_URL_PATTERN);
+        fetchEndpointMap.put(SnapshotEntityType.ASSET, ASSETS_URL_PATTERN);
     }
 }

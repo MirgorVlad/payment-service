@@ -1,13 +1,13 @@
 package org.mirgor.service.rest;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.constant.OperationalEntityType;
+import org.mirgor.common.constant.SnapshotEntityType;
 import org.mirgor.common.constant.WorkspaceConstants;
 import org.mirgor.common.dto.rest.EntityRequestContext;
 import org.mirgor.common.dto.rest.PageResponse;
 import org.mirgor.common.dto.rest.WorkspaceLoginResponse;
+import org.mirgor.common.dto.workspace.Workspace;
 import org.mirgor.common.dto.workspace.WorkspacePingRequest;
-import org.mirgor.entity.Workspace;
 import org.mirgor.exception.WorkspaceAvailabilityException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class WorkspaceRestClient {
                 .toFuture();
     }
 
-    public CompletableFuture<Long> fetchAllEntitiesCount(Workspace workspace, String token, OperationalEntityType entityType) {
+    public CompletableFuture<Long> fetchAllEntitiesCount(Workspace workspace, String token, SnapshotEntityType entityType) {
         var path = WorkspaceConstants.fetchEndpointMap.get(entityType);
         if (path == null) {
             throw new IllegalArgumentException(String.format("Unsupported entity type [%s]", entityType));
@@ -74,6 +74,4 @@ public class WorkspaceRestClient {
                 })
                 .retryWhen(Retry.backoff(MAX_ATTEMPTS, Duration.ofSeconds(INITIAL_DELAY)));
     }
-
-
 }

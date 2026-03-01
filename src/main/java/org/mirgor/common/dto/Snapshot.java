@@ -1,18 +1,21 @@
 package org.mirgor.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.constant.OperationalEntityType;
+import org.mirgor.common.constant.SnapshotEntityType;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OperationDto {
+public class Snapshot {
 
     private Long id;
 
@@ -20,9 +23,12 @@ public class OperationDto {
     private Long workspaceId;
 
     @NotNull
-    private OperationalEntityType operationalEntityType;
+    private SnapshotEntityType snapshotEntityType;
 
     @NotNull
     @Min(1)
     private Long count;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime snapshotTime;
 }

@@ -10,19 +10,19 @@ This project charges ThingsBoard tenants for telemetry and memory utilization, c
 
 ```bash
 # Build (skip tests)
-./mvnw clean package -DskipTests
+mvn clean package -DskipTests
 
 # Run the application
-./mvnw spring-boot:run
+mvn spring-boot:run
 
 # Run all tests
-./mvnw test
+mvn test
 
 # Run a single test class
-./mvnw test -Dtest=SecurityTest
+mvn test -Dtest=SecurityTest
 
 # Run a single test method
-./mvnw test -Dtest=SecurityTest#validJwtTokenShouldGrantAccess
+mvn test -Dtest=SecurityTest#validJwtTokenShouldGrantAccess
 ```
 
 ## Required Environment Variables
@@ -34,7 +34,7 @@ JWT_SECRET=<base64-encoded-secret>
 JWT_EXPIRATION=<millis, e.g. 3600000>
 ```
 
-PostgreSQL must be running at `localhost:5432` with database `tb_payment` (user/password: `postgres`/`postgres`). Schema is auto-managed by Hibernate (`ddl-auto=update`).
+PostgreSQL must be running at `localhost:5432` with database `tb_payment` (userEntity/password: `postgres`/`postgres`). Schema is auto-managed by Hibernate (`ddl-auto=update`).
 
 ## Architecture
 
@@ -43,32 +43,36 @@ Spring Boot 4.0.2 application on Java 25. Uses standard Spring MVC (not reactive
 ### Layered Structure
 
 ```
-Controller → Service → DaoService → Repository → DB
+Controller (DTO) → Service (DTO) → DaoService (maps DTO↔Entity internally) → Repository (Entity) → DB
 ```
 
-- **Controllers** (`org.mirgor.controller`): REST endpoints. Map DTOs in/out via mappers, delegate all logic to Services.
-- **Services** (`org.mirgor.service`): Business logic. Enforce ownership/authorization using `SecurityUtil.getCurrentUserId()` and `SecurityUtil.getCurrentUserRole()`.
-- **DAO Services** (`org.mirgor.service.dao`): Thin wrappers around JPA repositories that own `@Transactional` boundaries. Direct repository access from outside DAO services is avoided.
+- **Controllers** (`org.mirgor.controller`): REST endpoints. Work exclusively with DTOs; no mapper injection. Delegate all logic to Services.
+- **Services** (`org.mirgor.service`): Business logic. Work exclusively with DTOs. Enforce ownership/authorization using `SecurityUtil.getCurrentUserId()` and `SecurityUtil.getCurrentUserRole()`.
+- **DAO Services** (`org.mirgor.service.dao`): The sole entity↔DTO translation boundary. Own `@Transactional` boundaries, inject mappers, and return DTOs. Direct repository access from outside DAO services is avoided.
 - **Repositories** (`org.mirgor.repository`): Spring Data JPA interfaces.
-- **Mappers** (`org.mirgor.service.mapper`): Convert between entities and DTOs.
+- **Mappers** (`org.mirgor.service.mapper`): Injected only by DAO services. `WorkspaceMapper` and `UserMapper` implement `EntityMapper<E, D>` (bidirectional). `SnapshotMapper` and `PriceMapper` are unidirectional (`toDto` only); `fromDto` logic is handled inline in their respective DAO services.
 
 ### Domain Model
 
 - **User** — has a `Role` (USER or ADMIN).
 - **Workspace** — belongs to a User; stores external system credentials (`host`, `email`, `password`) and a `SyncStatus` (PENDING / ACTIVE / INACTIVE).
-- **Operation** — belongs to a Workspace; tracks `OperationalEntityType` and a count.
-- **Price** — belongs to a Workspace; stores pricing info per `OperationalEntityType` and `Currency`.
+- **Snapshot** (formerly Operation) — belongs to a Workspace; records a point-in-time count of a `SnapshotEntityType`. Entity class: `SnapshotEntity` (table: `snapshot`). DTO class: `Snapshot`.
+- **Price** — belongs to a Workspace; stores pricing info per `SnapshotEntityType` and `Currency`.
 
 ### Authorization Pattern
 
 - `/api/auth/signup` and `/api/auth/signin` are public; all other endpoints require a valid JWT (`Authorization: Bearer <token>`).
-- Services enforce row-level ownership: users see only their own workspaces/operations/prices; ADMINs see everything.
+- Services enforce row-level ownership: users see only their own workspaces/snapshots/prices; ADMINs see everything.
 - Admin-only endpoints use `@PreAuthorize("hasRole('ADMIN')")` on the controller method.
 - `@EnableMethodSecurity` is active.
 
 ### Workspace Sync
 
-`WorkspaceSynchronizationService` runs a scheduled job (default: every 60 seconds, configurable via `workspace.sync.rate_millis`) that pings each workspace by POSTing to `{workspace.host}/api/auth/login`. Success → `SyncStatus.ACTIVE`; failure → `SyncStatus.INACTIVE`. Ping callbacks are processed on a fixed thread pool (`executor.sync.threads_count`, default 32). Manual sync trigger is available via `POST /api/workspaces/sync` (ADMIN only).
+`WorkspaceSynchronizationService` runs two scheduled jobs:
+- **Ping sync** (default: every 60 s, `workspace.sync.rate_millis`): POSTs to `{workspace.host}/api/auth/login` for each workspace. Success → `SyncStatus.ACTIVE`; failure → `SyncStatus.INACTIVE`. Manual trigger: `POST /api/workspaces/sync` (ADMIN only).
+- **Usage snapshot** (default: every 3600 s, `workspace.sync.usage_snapshot`): logs in to each workspace, counts entities per `SnapshotEntityType`, and persists a `Snapshot` record. Trigger: `POST /api/workspaces/snapshot` (ADMIN only) — returns `List<Snapshot>`.
+
+Both jobs run on a fixed thread pool (`dbTaskExecutor`). The service works exclusively with `Workspace` and `Snapshot` DTOs; no entities cross its boundary.
 
 ### Security
 
