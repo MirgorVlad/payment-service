@@ -28,11 +28,10 @@ public class BillingRecordEntity {
     @JoinColumn(name = "workspace_id")
     private WorkspaceEntity workspace;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime billingTime;
+    @Column(nullable = false)
+    private LocalDateTime startBillingPeriod;
 
-    @PrePersist
-    protected void onCreate() {
-        billingTime = LocalDateTime.now();
-    }
+    @Column(nullable = false)
+    private LocalDateTime endBillingPeriod;
+
 }

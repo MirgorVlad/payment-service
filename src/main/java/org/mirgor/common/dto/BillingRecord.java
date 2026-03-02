@@ -1,6 +1,5 @@
 package org.mirgor.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +25,9 @@ public class BillingRecord {
 
     private Long customerCount;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDateTime billingTime;
+    @NotNull
+    private LocalDateTime startBillingPeriod;
+
+    @NotNull
+    private LocalDateTime endBillingPeriod;
 }

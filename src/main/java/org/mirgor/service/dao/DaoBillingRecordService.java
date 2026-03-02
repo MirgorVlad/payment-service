@@ -30,6 +30,8 @@ public class DaoBillingRecordService {
             entity.setDeviceCount(billingRecord.getDeviceCount());
             entity.setAssetCount(billingRecord.getAssetCount());
             entity.setCustomerCount(billingRecord.getCustomerCount());
+            entity.setStartBillingPeriod(billingRecord.getStartBillingPeriod());
+            entity.setEndBillingPeriod(billingRecord.getEndBillingPeriod());
             entity.setWorkspace(workspaceEntity);
         } else {
             entity = billingRecordMapper.fromDto(billingRecord);

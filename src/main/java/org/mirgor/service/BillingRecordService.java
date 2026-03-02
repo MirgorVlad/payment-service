@@ -27,6 +27,8 @@ public class BillingRecordService {
         existing.setDeviceCount(updatedBillingRecord.getDeviceCount());
         existing.setAssetCount(updatedBillingRecord.getAssetCount());
         existing.setCustomerCount(updatedBillingRecord.getCustomerCount());
+        existing.setStartBillingPeriod(updatedBillingRecord.getStartBillingPeriod());
+        existing.setEndBillingPeriod(updatedBillingRecord.getEndBillingPeriod());
         existing.setWorkspaceId(updatedBillingRecord.getWorkspaceId());
         return daoBillingRecordService.saveBillingRecord(existing);
     }
