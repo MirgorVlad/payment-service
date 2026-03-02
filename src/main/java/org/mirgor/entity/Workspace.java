@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.entity.SyncStatus;
+import org.mirgor.common.constant.SyncStatus;
 
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class Workspace {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private SyncStatus syncStatus = SyncStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +45,6 @@ public class Workspace {
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> priceList;
 
-
+    //TODO add  last sync Ts
 }
 

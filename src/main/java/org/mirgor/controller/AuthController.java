@@ -2,9 +2,9 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.dto.AuthRequest;
-import org.mirgor.dto.AuthResponse;
-import org.mirgor.dto.UserDto;
+import org.mirgor.common.dto.auth.AuthRequest;
+import org.mirgor.common.dto.auth.AuthResponse;
+import org.mirgor.common.dto.UserDto;
 import org.mirgor.security.jwt.JwtService;
 import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.service.UserService;

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.entity.OperationalEntityType;
+import org.mirgor.common.constant.OperationalEntityType;
 
 @Data
 @Builder
@@ -13,7 +13,7 @@ import org.mirgor.common.entity.OperationalEntityType;
 @AllArgsConstructor
 @Entity
 @Table(name = "operation")
-public class Operation {
+public class Operation { //TODO rename (Workspace Snapshot)
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +30,6 @@ public class Operation {
     @Column(nullable = false)
     private Long count;
 
+    //TODO make snapshot time
 
 }

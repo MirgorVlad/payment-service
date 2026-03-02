@@ -2,7 +2,7 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.dto.UserDto;
+import org.mirgor.common.dto.UserDto;
 import org.mirgor.service.UserService;
 import org.mirgor.service.mapper.UserMapper;
 import org.springframework.http.HttpStatus;

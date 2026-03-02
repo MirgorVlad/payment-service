@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.dto.workspace.WorkspaceDto;
+import org.mirgor.common.dto.workspace.WorkspaceDto;
 import org.mirgor.entity.Workspace;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +21,7 @@ public class WorkspaceMapper implements EntityMapper<Workspace, WorkspaceDto> {
                 .email(workspace.getEmail())
                 .host(workspace.getHost())
                 .password(workspace.getPassword())
+                .syncStatus(workspace.getSyncStatus())
                 .build();
     }
 }

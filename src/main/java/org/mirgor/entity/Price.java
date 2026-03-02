@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.entity.Currency;
-import org.mirgor.common.entity.OperationalEntityType;
+import org.mirgor.common.constant.Currency;
+import org.mirgor.common.constant.OperationalEntityType;
 
 import java.math.BigDecimal;
 

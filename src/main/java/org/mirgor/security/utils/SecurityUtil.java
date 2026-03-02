@@ -1,10 +1,13 @@
 package org.mirgor.security.utils;
 
-import org.mirgor.common.entity.Role;
+import org.mirgor.common.constant.Role;
 import org.mirgor.security.principal.SecurityUser;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 
 public final class SecurityUtil {
+
+    public static final String ROLE_PREFIX = "ROLE_";
 
     private SecurityUtil() {
     }
@@ -26,7 +29,7 @@ public final class SecurityUtil {
         if (principal instanceof SecurityUser userDetails) {
             var authority = userDetails.getAuthorities().stream().findFirst().orElseThrow(IllegalArgumentException::new)
                     .getAuthority();
-            return Role.valueOf(authority);
+            return Role.valueOf(authority.replace(ROLE_PREFIX, ""));
         }
         throw new IllegalStateException(
                 "Unsupported authentication principal: " + principal.getClass()

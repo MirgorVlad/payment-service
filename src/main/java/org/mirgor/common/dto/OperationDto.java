@@ -1,4 +1,4 @@
-package org.mirgor.dto;
+package org.mirgor.common.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.entity.OperationalEntityType;
+import org.mirgor.common.constant.OperationalEntityType;
 
 @Data
 @Builder

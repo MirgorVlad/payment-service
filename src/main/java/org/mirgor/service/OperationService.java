@@ -1,6 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mirgor.entity.Operation;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoOperationService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OperationService {
@@ -17,6 +19,7 @@ public class OperationService {
 
     public Operation createOperation(Operation operation) {
         operation.setId(null);
+        log.debug("Save operation {}", operation);
         return daoOperationService.saveOperation(operation);
     }
 
