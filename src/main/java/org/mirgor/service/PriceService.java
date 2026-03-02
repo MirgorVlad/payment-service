@@ -1,7 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.entity.Price;
+import org.mirgor.common.dto.Price;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoPriceService;
 import org.springframework.stereotype.Service;
@@ -21,15 +21,15 @@ public class PriceService {
     }
 
     public Price updatePrice(Long id, Price updatedPrice) {
-        var price = getPriceById(id)
+        var existing = getPriceById(id)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Price with id %s is not found", id)));
 
-        price.setWorkspace(updatedPrice.getWorkspace());
-        price.setPrice(updatedPrice.getPrice());
-        price.setCurrency(updatedPrice.getCurrency());
-        price.setOperationalEntityType(updatedPrice.getOperationalEntityType());
+        existing.setWorkspaceId(updatedPrice.getWorkspaceId());
+        existing.setPrice(updatedPrice.getPrice());
+        existing.setCurrency(updatedPrice.getCurrency());
+        existing.setSnapshotEntityType(updatedPrice.getSnapshotEntityType());
 
-        return daoPriceService.savePrice(price);
+        return daoPriceService.savePrice(existing);
     }
 
     public void deletePrice(Long id) {

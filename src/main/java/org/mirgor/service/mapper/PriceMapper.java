@@ -1,35 +1,27 @@
 package org.mirgor.service.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.PriceDto;
-import org.mirgor.entity.Price;
-import org.mirgor.service.WorkspaceService;
+import org.mirgor.common.dto.Price;
+import org.mirgor.entity.PriceEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-public class PriceMapper implements EntityMapper<Price, PriceDto> {
+public class PriceMapper implements EntityMapper<PriceEntity, Price> {
 
-    private final WorkspaceService workspaceService;
-
-    public Price fromDto(PriceDto priceDto) {
-        var workspace = workspaceService.getWorkspaceById(priceDto.getWorkspaceId());
-        if (workspace == null) {
-            throw new IllegalArgumentException(String.format("Workspace with id %s not found", priceDto.getWorkspaceId()));
-        }
+    @Override
+    public Price toDto(PriceEntity priceEntity) {
         return Price.builder()
-                .workspace(workspace)
-                .operationalEntityType(priceDto.getOperationalEntityType())
-                .currency(priceDto.getCurrency())
-                .price(priceDto.getPrice())
+                .id(priceEntity.getId())
+                .workspaceId(priceEntity.getWorkspace().getId())
+                .snapshotEntityType(priceEntity.getSnapshotEntityType())
+                .currency(priceEntity.getCurrency())
+                .price(priceEntity.getPrice())
                 .build();
     }
 
-    public PriceDto toDto(Price price) {
-        return PriceDto.builder()
-                .id(price.getId())
-                .workspaceId(price.getWorkspace().getId())
-                .operationalEntityType(price.getOperationalEntityType())
+    @Override
+    public PriceEntity fromDto(Price price) {
+        return PriceEntity.builder()
+                .snapshotEntityType(price.getSnapshotEntityType())
                 .currency(price.getCurrency())
                 .price(price.getPrice())
                 .build();

@@ -2,21 +2,18 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.common.constant.OperationalEntityType;
+import org.mirgor.common.constant.SnapshotEntityType;
 import org.mirgor.common.constant.SyncStatus;
+import org.mirgor.common.dto.Snapshot;
 import org.mirgor.common.dto.rest.WorkspaceLoginResponse;
-import org.mirgor.entity.Operation;
-import org.mirgor.entity.Workspace;
+import org.mirgor.common.dto.workspace.Workspace;
 import org.mirgor.service.dao.DaoWorkspaceService;
 import org.mirgor.service.rest.WorkspaceRestClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
@@ -28,15 +25,15 @@ public class WorkspaceSynchronizationService {
 
     private final WorkspaceRestClient workspaceRestClient;
     private final DaoWorkspaceService daoWorkspaceService;
-    private final OperationService operationService;
+    private final SnapshotService snapshotService;
     private final Executor dbTaskExecutor;
 
-    @Scheduled(fixedRateString = "${workspace.sync.rate_millis: 60000}")
+    @Scheduled(fixedRateString = "${workspace.sync.rate_millis:60000}")
     void scheduleWorkspacesSync() {
         syncAllWorkspaces();
     }
 
-    @Scheduled(fixedRateString = "${workspace.sync.usage_snapshot: 3600000}")
+    @Scheduled(fixedRateString = "${workspace.sync.usage_snapshot:3600000}")
     void scheduleWorkspaceSnapshot() {
         fetchWorkspacesUsageSnapshot();
     }
@@ -48,12 +45,13 @@ public class WorkspaceSynchronizationService {
     }
 
     @Async("dbTaskExecutor")
-    public CompletableFuture<List<Operation>> fetchWorkspacesUsageSnapshot() {
+    public CompletableFuture<List<Snapshot>> fetchWorkspacesUsageSnapshot() {
         log.debug("Start usage Snapshot");
         var startTime = System.currentTimeMillis();
 
         var workspaceList = daoWorkspaceService.findAllWorkspaces();
-        List<CompletableFuture<List<Operation>>> operationSaveFutureList = workspaceList.stream().map(workspace -> {
+        List<CompletableFuture<List<Snapshot>>> snapshotSaveFutureList = workspaceList.stream().map(workspace -> {
+            var syncId = UUID.randomUUID();
             var countFuture = countWorkspaceEntities(workspace);
             return countFuture
                     .exceptionally(ex -> {
@@ -63,13 +61,13 @@ public class WorkspaceSynchronizationService {
                     .thenApplyAsync(countMap ->
                             countMap.entrySet().stream()
                                     .map(entry -> {
-                                        var operation = buildOperation(workspace, entry.getKey(), entry.getValue());
-                                        return operationService.createOperation(operation);
+                                        var snapshot = buildSnapshot(workspace, entry.getKey(), entry.getValue(), syncId);
+                                        return snapshotService.createSnapshot(snapshot);
                                     }).toList(), dbTaskExecutor);
         }).toList();
 
-        return CompletableFuture.allOf(operationSaveFutureList.toArray(new CompletableFuture[0]))
-                .thenApply(v -> operationSaveFutureList.stream()
+        return CompletableFuture.allOf(snapshotSaveFutureList.toArray(new CompletableFuture[0]))
+                .thenApply(v -> snapshotSaveFutureList.stream()
                         .flatMap(f -> f.join().stream())
                         .toList())
                 .whenComplete((result, ex) -> {
@@ -77,17 +75,17 @@ public class WorkspaceSynchronizationService {
                     if (ex != null) {
                         log.error("Usage snapshot failed after {}ms", duration, ex);
                     } else {
-                        log.info("Usage snapshot completed in {}ms, saved {} operations", duration, result.size());
+                        log.info("Usage snapshot completed in {}ms, saved {} snapshots", duration, result.size());
                     }
                 });
     }
 
-    private CompletableFuture<Map<OperationalEntityType, Long>> countWorkspaceEntities(Workspace workspace) {
+    private CompletableFuture<Map<SnapshotEntityType, Long>> countWorkspaceEntities(Workspace workspace) {
         return workspaceRestClient.loginWorkspace(workspace)
                 .thenCompose(token -> {
-                    Map<OperationalEntityType, Long> entityCountMap = new ConcurrentHashMap<>();
+                    Map<SnapshotEntityType, Long> entityCountMap = new ConcurrentHashMap<>();
 
-                    List<CompletableFuture<Void>> futures = Arrays.stream(OperationalEntityType.values())
+                    List<CompletableFuture<Void>> futures = Arrays.stream(SnapshotEntityType.values())
                             .map(entity -> workspaceRestClient.fetchAllEntitiesCount(workspace, token.token(), entity)
                                     .thenAccept(count -> entityCountMap.put(entity, count)))
                             .toList();
@@ -107,12 +105,12 @@ public class WorkspaceSynchronizationService {
         }, dbTaskExecutor);
     }
 
-
-    private static Operation buildOperation(Workspace workspace, OperationalEntityType entity, Long count) {
-        return Operation.builder()
-                .operationalEntityType(entity)
+    private static Snapshot buildSnapshot(Workspace workspace, SnapshotEntityType entity, Long count, UUID syncId) {
+        return Snapshot.builder()
+                .syncId(syncId)
+                .snapshotEntityType(entity)
                 .count(count)
-                .workspace(workspace)
+                .workspaceId(workspace.getId())
                 .build();
     }
 }

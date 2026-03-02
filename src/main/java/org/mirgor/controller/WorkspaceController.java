@@ -2,11 +2,10 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.workspace.WorkspaceDto;
-import org.mirgor.entity.Operation;
+import org.mirgor.common.dto.Snapshot;
+import org.mirgor.common.dto.workspace.Workspace;
 import org.mirgor.service.WorkspaceService;
 import org.mirgor.service.WorkspaceSynchronizationService;
-import org.mirgor.service.mapper.WorkspaceMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,14 +21,12 @@ public class WorkspaceController {
 
     private final WorkspaceSynchronizationService workspaceSynchronizationService;
     private final WorkspaceService workspaceService;
-    private final WorkspaceMapper mapper;
 
     @PostMapping
-    public ResponseEntity<WorkspaceDto> createWorkspace(@RequestBody @Valid WorkspaceDto workspaceDto) {
+    public ResponseEntity<Workspace> createWorkspace(@RequestBody @Valid Workspace workspaceDto) {
         try {
-            var workspace = mapper.fromDto(workspaceDto);
-            var createdWorkspace = workspaceService.createWorkspace(workspace);
-            return new ResponseEntity<>(mapper.toDto(createdWorkspace), HttpStatus.CREATED);
+            var createdWorkspace = workspaceService.createWorkspace(workspaceDto);
+            return new ResponseEntity<>(createdWorkspace, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -37,41 +34,37 @@ public class WorkspaceController {
 
     @PostMapping("/sync")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<WorkspaceDto> syncWorkspaces() {
+    public ResponseEntity<Workspace> syncWorkspaces() {
         workspaceSynchronizationService.syncAllWorkspaces();
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/snapshot")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Operation> createWorkspacesSnapshot() throws ExecutionException, InterruptedException {
-        return workspaceSynchronizationService.fetchWorkspacesUsageSnapshot().get();
+    public List<Snapshot> createWorkspacesSnapshot() throws ExecutionException, InterruptedException {
+        return workspaceSynchronizationService.fetchWorkspacesUsageSnapshot().get(); //TODO ASYNC
     }
 
     @GetMapping
-    public ResponseEntity<List<WorkspaceDto>> getAllWorkspaces() {
+    public ResponseEntity<List<Workspace>> getAllWorkspaces() {
         var workspaces = workspaceService.getAllWorkspaces();
-        var workspaceDtos = workspaces.stream()
-                .map(mapper::toDto)
-                .toList();
-        return new ResponseEntity<>(workspaceDtos, HttpStatus.OK);
+        return new ResponseEntity<>(workspaces, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> getWorkspaceById(@PathVariable Long id) {
+    public ResponseEntity<Workspace> getWorkspaceById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(mapper.toDto(workspaceService.getWorkspaceById(id)));
+            return ResponseEntity.ok(workspaceService.getWorkspaceById(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkspaceDto> updateWorkspace(@PathVariable Long id, @RequestBody @Valid WorkspaceDto workspaceDto) {
+    public ResponseEntity<Workspace> updateWorkspace(@PathVariable Long id, @RequestBody @Valid Workspace workspace) {
         try {
-            var updatedWorkspace = workspaceService.updateWorkspace(id, mapper.fromDto(workspaceDto));
-            var updatedWorkspaceDto = mapper.toDto(updatedWorkspace);
-            return ResponseEntity.ok(updatedWorkspaceDto);
+            var updatedWorkspace = workspaceService.updateWorkspace(id, workspace);
+            return ResponseEntity.ok(updatedWorkspace);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

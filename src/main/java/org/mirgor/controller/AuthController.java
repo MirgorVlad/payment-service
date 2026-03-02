@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.dto.auth.AuthRequest;
 import org.mirgor.common.dto.auth.AuthResponse;
-import org.mirgor.common.dto.UserDto;
+import org.mirgor.common.dto.User;
 import org.mirgor.security.jwt.JwtService;
 import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.service.UserService;
-import org.mirgor.service.mapper.UserMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtService jwtService;
-    private final UserMapper mapper;
 
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> authenticateUser(@RequestBody @Valid AuthRequest authRequest) {
@@ -48,9 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDto userDto) {
-        var user = mapper.fromDto(userDto);
-        var createdUser = userService.createUser(user);
-        return new ResponseEntity<>(mapper.toDto(createdUser), HttpStatus.CREATED);
+    public ResponseEntity<User> registerUser(@RequestBody @Valid User userDto) {
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 }

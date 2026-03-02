@@ -14,9 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
-    public User(Long id) {
+    public UserEntity(Long id) {
         this.id = id;
     }
 
@@ -35,7 +35,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Workspace> workspaces;
+    private List<WorkspaceEntity> workspace;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

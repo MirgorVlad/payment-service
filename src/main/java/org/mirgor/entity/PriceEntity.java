@@ -5,15 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.constant.OperationalEntityType;
+import org.mirgor.common.constant.Currency;
+import org.mirgor.common.constant.SnapshotEntityType;
+
+import java.math.BigDecimal;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "operation")
-public class Operation { //TODO rename (Workspace Snapshot)
+@Table(name = "price")
+public class PriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +24,18 @@ public class Operation { //TODO rename (Workspace Snapshot)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
-    private Workspace workspace;
+    private WorkspaceEntity workspace;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private OperationalEntityType operationalEntityType;
+    @Enumerated(value = EnumType.STRING)
+    private SnapshotEntityType snapshotEntityType;
 
     @Column(nullable = false)
-    private Long count;
+    @Enumerated(value = EnumType.STRING)
+    private Currency currency;
 
-    //TODO make snapshot time
+    @Column(nullable = false)
+    private BigDecimal price;
+
 
 }
