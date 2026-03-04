@@ -1,4 +1,4 @@
-package org.mirgor.common.dto.workspace;
+package org.mirgor.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

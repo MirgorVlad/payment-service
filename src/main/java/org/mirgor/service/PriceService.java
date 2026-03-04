@@ -1,7 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Price;
+import org.mirgor.common.entity.Price;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoPriceService;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class PriceService {
         existing.setWorkspaceId(updatedPrice.getWorkspaceId());
         existing.setPrice(updatedPrice.getPrice());
         existing.setCurrency(updatedPrice.getCurrency());
-        existing.setSnapshotEntityType(updatedPrice.getSnapshotEntityType());
+        existing.setWorkspaceEntityType(updatedPrice.getWorkspaceEntityType());
 
         return daoPriceService.savePrice(existing);
     }

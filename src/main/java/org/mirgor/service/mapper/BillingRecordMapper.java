@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.dto.BillingRecord;
+import org.mirgor.common.entity.BillingRecord;
 import org.mirgor.entity.BillingRecordEntity;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,9 @@ public class BillingRecordMapper implements EntityMapper<BillingRecordEntity, Bi
                 .deviceCount(dto.getDeviceCount())
                 .assetCount(dto.getAssetCount())
                 .customerCount(dto.getCustomerCount())
+                .devicePrice(dto.getDevicePrice())
+                .assetPrice(dto.getAssetPrice())
+                .customerPrice(dto.getCustomerPrice())
                 .startBillingPeriod(dto.getStartBillingPeriod())
                 .endBillingPeriod(dto.getEndBillingPeriod())
                 .build();
@@ -25,6 +28,9 @@ public class BillingRecordMapper implements EntityMapper<BillingRecordEntity, Bi
                 .workspaceId(entity.getWorkspace().getId())
                 .deviceCount(entity.getDeviceCount())
                 .assetCount(entity.getAssetCount())
+                .devicePrice(entity.getDevicePrice())
+                .assetPrice(entity.getAssetPrice())
+                .customerPrice(entity.getCustomerPrice())
                 .customerCount(entity.getCustomerCount())
                 .startBillingPeriod(entity.getStartBillingPeriod())
                 .endBillingPeriod(entity.getEndBillingPeriod())

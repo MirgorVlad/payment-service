@@ -2,7 +2,7 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.common.dto.Snapshot;
+import org.mirgor.common.entity.Snapshot;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoSnapshotService;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class SnapshotService {
 
         log.debug("Update snapshot {} with id {}", updatedSnapshot, id);
         existing.setWorkspaceId(updatedSnapshot.getWorkspaceId());
-        existing.setSnapshotEntityType(updatedSnapshot.getSnapshotEntityType());
+        existing.setWorkspaceEntityType(updatedSnapshot.getWorkspaceEntityType());
         existing.setCount(updatedSnapshot.getCount());
 
         return daoSnapshotService.saveSnapshot(existing);

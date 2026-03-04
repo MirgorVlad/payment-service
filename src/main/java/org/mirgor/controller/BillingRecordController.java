@@ -2,7 +2,7 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.BillingRecord;
+import org.mirgor.common.entity.BillingRecord;
 import org.mirgor.service.BillingRecordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

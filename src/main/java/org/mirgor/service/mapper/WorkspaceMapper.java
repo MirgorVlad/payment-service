@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.dto.workspace.Workspace;
+import org.mirgor.common.entity.Workspace;
 import org.mirgor.entity.UserEntity;
 import org.mirgor.entity.WorkspaceEntity;
 import org.springframework.stereotype.Component;

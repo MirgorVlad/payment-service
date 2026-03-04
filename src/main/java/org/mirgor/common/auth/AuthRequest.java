@@ -1,4 +1,4 @@
-package org.mirgor.common.dto.auth;
+package org.mirgor.common.auth;
 
 import jakarta.validation.constraints.NotNull;
 

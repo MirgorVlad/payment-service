@@ -2,8 +2,8 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Snapshot;
-import org.mirgor.common.dto.workspace.Workspace;
+import org.mirgor.common.entity.Snapshot;
+import org.mirgor.common.entity.Workspace;
 import org.mirgor.service.WorkspaceService;
 import org.mirgor.service.WorkspaceSynchronizationService;
 import org.springframework.http.HttpStatus;

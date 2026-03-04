@@ -3,6 +3,7 @@ package org.mirgor.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,12 +25,18 @@ public class BillingRecordEntity {
 
     private Long customerCount;
 
+    private BigDecimal devicePrice;
+
+    private BigDecimal assetPrice;
+
+    private BigDecimal customerPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id")
     private WorkspaceEntity workspace;
 
     @Column(nullable = false)
-    private LocalDateTime startBillingPeriod;
+    private LocalDateTime startBillingPeriod; //TODO to Instant
 
     @Column(nullable = false)
     private LocalDateTime endBillingPeriod;

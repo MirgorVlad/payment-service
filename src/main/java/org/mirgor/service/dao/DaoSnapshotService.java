@@ -1,7 +1,9 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Snapshot;
+import org.mirgor.common.constant.WorkspaceEntityType;
+import org.mirgor.common.dto.workspace.TimeInterval;
+import org.mirgor.common.entity.Snapshot;
 import org.mirgor.entity.SnapshotEntity;
 import org.mirgor.repository.SnapshotRepository;
 import org.mirgor.service.mapper.SnapshotMapper;
@@ -29,7 +31,7 @@ public class DaoSnapshotService {
             entity = snapshotRepository.findById(snapshot.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Snapshot not found: " + snapshot.getId()));
             entity.setWorkspace(workspaceEntity);
-            entity.setSnapshotEntityType(snapshot.getSnapshotEntityType());
+            entity.setWorkspaceEntityType(snapshot.getWorkspaceEntityType());
             entity.setCount(snapshot.getCount());
         } else {
             entity = snapshotMapper.fromDto(snapshot);
@@ -67,5 +69,9 @@ public class DaoSnapshotService {
 
     public List<Snapshot> findByWorkspaceUserId(Long userId) {
         return snapshotRepository.findByWorkspaceUserId(userId).stream().map(snapshotMapper::toDto).toList();
+    }
+
+    public Long findMaxEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
     }
 }

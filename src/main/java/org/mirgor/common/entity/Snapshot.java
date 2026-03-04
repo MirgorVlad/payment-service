@@ -1,4 +1,4 @@
-package org.mirgor.common.dto;
+package org.mirgor.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.constant.SnapshotEntityType;
+import org.mirgor.common.constant.WorkspaceEntityType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class Snapshot {
     private Long workspaceId;
 
     @NotNull
-    private SnapshotEntityType snapshotEntityType;
+    private WorkspaceEntityType workspaceEntityType;
 
     @NotNull
     @Min(1)

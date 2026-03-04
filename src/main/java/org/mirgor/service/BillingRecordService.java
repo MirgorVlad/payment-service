@@ -2,7 +2,7 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.constant.Role;
-import org.mirgor.common.dto.BillingRecord;
+import org.mirgor.common.entity.BillingRecord;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoBillingRecordService;
 import org.springframework.stereotype.Service;

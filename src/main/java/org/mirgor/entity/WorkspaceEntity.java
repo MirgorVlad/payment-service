@@ -45,6 +45,10 @@ public class WorkspaceEntity {
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceEntity> priceList;
 
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BillingRecordEntity> billingRecordEntityList;
+
     //TODO add  last sync Ts
+    //TODO add timezone
 }
 

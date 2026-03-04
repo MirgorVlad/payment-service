@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.dto.Price;
+import org.mirgor.common.entity.Price;
 import org.mirgor.entity.PriceEntity;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ public class PriceMapper implements EntityMapper<PriceEntity, Price> {
         return Price.builder()
                 .id(priceEntity.getId())
                 .workspaceId(priceEntity.getWorkspace().getId())
-                .snapshotEntityType(priceEntity.getSnapshotEntityType())
+                .workspaceEntityType(priceEntity.getWorkspaceEntityType())
                 .currency(priceEntity.getCurrency())
                 .price(priceEntity.getPrice())
                 .build();
@@ -21,7 +21,7 @@ public class PriceMapper implements EntityMapper<PriceEntity, Price> {
     @Override
     public PriceEntity fromDto(Price price) {
         return PriceEntity.builder()
-                .snapshotEntityType(price.getSnapshotEntityType())
+                .workspaceEntityType(price.getWorkspaceEntityType())
                 .currency(price.getCurrency())
                 .price(price.getPrice())
                 .build();
