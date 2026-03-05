@@ -23,6 +23,7 @@ public class BillingRecordController {
     private final BillingService billingService;
 
     @PostMapping("/generate/{workspaceId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CompletableFuture<BillingRecord> billingWorkspaces(@PathVariable Long workspaceId,
                                                               @RequestBody TimeInterval timeInterval) {
         return billingService.generateBillingRecord(workspaceId, timeInterval);
