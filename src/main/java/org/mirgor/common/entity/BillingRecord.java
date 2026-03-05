@@ -32,6 +32,8 @@ public class BillingRecord {
     @Min(0)
     private BigDecimal customerPrice;
 
+    //TODO add currency
+
     @NotNull
     private LocalDateTime startBillingPeriod;
 

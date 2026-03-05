@@ -16,12 +16,12 @@ public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
 
     @Query("""
             SELECT p FROM PriceEntity p
-            WHERE p.workspace = :workspaceId
+            WHERE p.workspace.id = :workspaceId
              AND p.workspaceEntityType = :entityType
              ORDER BY p.createTime DESC
              LIMIT 1
             """)
-    BigDecimal findLatestByWorkspaceIdAndEntityType(@Param("workspaceId") Long workspaceId,
+    PriceEntity findLatestByWorkspaceIdAndEntityType(@Param("workspaceId") Long workspaceId,
                                                     @Param("entityType") WorkspaceEntityType entityType);
 
     boolean existsById(Long id);

@@ -33,6 +33,7 @@ public class DaoSnapshotService {
             entity.setWorkspace(workspaceEntity);
             entity.setWorkspaceEntityType(snapshot.getWorkspaceEntityType());
             entity.setCount(snapshot.getCount());
+            entity.setSyncId(UUID.randomUUID());
         } else {
             entity = snapshotMapper.fromDto(snapshot);
             entity.setWorkspace(workspaceEntity);

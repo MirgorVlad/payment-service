@@ -19,7 +19,7 @@ public class WorkspaceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;   //TODO make composed key host + email
 
     @Column(nullable = false, length = 100)
     private String host;

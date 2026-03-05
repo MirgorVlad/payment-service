@@ -17,7 +17,7 @@ public interface SnapshotRepository extends JpaRepository<SnapshotEntity, Long> 
 
     @Query("""
             SELECT MAX(s.count) FROM SnapshotEntity s
-            WHERE s.workspace = :workspaceId
+            WHERE s.workspace.id = :workspaceId
               AND s.workspaceEntityType = :entityType
               AND s.snapshotTime >= :startTime
               AND s.snapshotTime < :endTime

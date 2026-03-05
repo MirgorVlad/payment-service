@@ -65,7 +65,7 @@ public class DaoPriceService {
         return priceRepository.findByWorkspaceUserId(userId).stream().map(priceMapper::toDto).toList();
     }
 
-    public BigDecimal findLatestByWorkspaceIdAndEntityType(Long workspaceId, WorkspaceEntityType type) {
+    public PriceEntity findLatestByWorkspaceIdAndEntityType(Long workspaceId, WorkspaceEntityType type) {
         return priceRepository.findLatestByWorkspaceIdAndEntityType(workspaceId, type);
     }
 }

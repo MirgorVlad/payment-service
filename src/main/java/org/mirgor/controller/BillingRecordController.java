@@ -2,14 +2,17 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.mirgor.common.dto.workspace.TimeInterval;
 import org.mirgor.common.entity.BillingRecord;
 import org.mirgor.service.BillingRecordService;
+import org.mirgor.service.BillingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +20,14 @@ import java.util.List;
 public class BillingRecordController {
 
     private final BillingRecordService billingRecordService;
+    private final BillingService billingService;
+
+    @PostMapping("/generate/{workspaceId}")
+    public CompletableFuture<BillingRecord> billingWorkspaces(@PathVariable Long workspaceId,
+                                                              @RequestBody TimeInterval timeInterval) {
+        return billingService.generateBillingRecord(workspaceId, timeInterval);
+
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
