@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.entity.BillingRecord;
+import org.mirgor.common.dto.entity.BillingRecord;
 import org.mirgor.entity.BillingRecordEntity;
 import org.springframework.stereotype.Component;
 

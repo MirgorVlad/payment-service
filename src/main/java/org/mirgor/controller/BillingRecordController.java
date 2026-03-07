@@ -2,9 +2,8 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.workspace.TimeInterval;
-import org.mirgor.common.entity.BillingRecord;
-import org.mirgor.service.BillingRecordService;
+import org.mirgor.common.dto.TimeInterval;
+import org.mirgor.common.dto.entity.BillingRecord;
 import org.mirgor.service.BillingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +18,11 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/billing")
 public class BillingRecordController {
 
-    private final BillingRecordService billingRecordService;
     private final BillingService billingService;
 
     @PostMapping("/generate/{workspaceId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public CompletableFuture<BillingRecord> billingWorkspaces(@PathVariable Long workspaceId,
+    public CompletableFuture<BillingRecord> billingWorkspace(@PathVariable Long workspaceId,
                                                               @RequestBody TimeInterval timeInterval) {
         return billingService.generateBillingRecord(workspaceId, timeInterval);
 
@@ -33,18 +31,18 @@ public class BillingRecordController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BillingRecord> createBillingRecord(@RequestBody @Valid BillingRecord billingRecord) {
-        return new ResponseEntity<>(billingRecordService.createBillingRecord(billingRecord), HttpStatus.CREATED);
+        return new ResponseEntity<>(billingService.createBillingRecord(billingRecord), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<BillingRecord>> getAllBillingRecords(@RequestParam(required = false) Long workspaceId) {
-        return new ResponseEntity<>(billingRecordService.getAllBillingRecords(workspaceId), HttpStatus.OK);
+        return new ResponseEntity<>(billingService.getAllBillingRecords(workspaceId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BillingRecord> getBillingRecordById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(billingRecordService.getBillingRecordById(id));
+            return ResponseEntity.ok(billingService.getBillingRecordById(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -54,7 +52,7 @@ public class BillingRecordController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BillingRecord> updateBillingRecord(@PathVariable Long id, @RequestBody @Valid BillingRecord billingRecord) {
         try {
-            return ResponseEntity.ok(billingRecordService.updateBillingRecord(id, billingRecord));
+            return ResponseEntity.ok(billingService.updateBillingRecord(id, billingRecord));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -64,7 +62,7 @@ public class BillingRecordController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteBillingRecord(@PathVariable Long id) {
         try {
-            billingRecordService.deleteBillingRecord(id);
+            billingService.deleteBillingRecord(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

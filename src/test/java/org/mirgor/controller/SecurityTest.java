@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mirgor.common.constant.Role;
 import org.mirgor.common.auth.AuthRequest;
 import org.mirgor.common.auth.AuthResponse;
-import org.mirgor.common.entity.User;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.security.principal.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

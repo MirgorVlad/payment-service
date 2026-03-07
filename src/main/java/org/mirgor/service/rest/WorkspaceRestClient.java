@@ -6,7 +6,7 @@ import org.mirgor.common.constant.WorkspaceConstants;
 import org.mirgor.common.rest.EntityRequestContext;
 import org.mirgor.common.rest.PageResponse;
 import org.mirgor.common.rest.WorkspaceLoginResponse;
-import org.mirgor.common.entity.Workspace;
+import org.mirgor.common.dto.entity.Workspace;
 import org.mirgor.common.dto.workspace.WorkspacePingRequest;
 import org.mirgor.exception.WorkspaceAvailabilityException;
 import org.springframework.core.ParameterizedTypeReference;

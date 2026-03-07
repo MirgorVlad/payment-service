@@ -1,7 +1,7 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.entity.Workspace;
+import org.mirgor.common.dto.entity.Workspace;
 import org.mirgor.entity.WorkspaceEntity;
 import org.mirgor.repository.WorkspaceRepository;
 import org.mirgor.service.mapper.WorkspaceMapper;

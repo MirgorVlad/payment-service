@@ -1,7 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.entity.User;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.service.dao.DaoUserService;
 import org.springframework.stereotype.Service;
 

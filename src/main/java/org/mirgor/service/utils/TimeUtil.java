@@ -1,6 +1,6 @@
 package org.mirgor.service.utils;
 
-import org.mirgor.common.dto.workspace.TimeInterval;
+import org.mirgor.common.dto.TimeInterval;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

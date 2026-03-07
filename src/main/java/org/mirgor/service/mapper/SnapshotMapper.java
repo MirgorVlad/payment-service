@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.entity.Snapshot;
+import org.mirgor.common.dto.entity.Snapshot;
 import org.mirgor.entity.SnapshotEntity;
 import org.springframework.stereotype.Component;
 

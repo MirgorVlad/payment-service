@@ -1,4 +1,4 @@
-package org.mirgor.common.entity;
+package org.mirgor.common.dto.entity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -26,7 +26,7 @@ public class Price {
     private WorkspaceEntityType workspaceEntityType;
 
     @NotNull
-    private Currency currency;
+    private Currency currency; //TODO move to Workspace level
 
     @NotNull
     @Positive

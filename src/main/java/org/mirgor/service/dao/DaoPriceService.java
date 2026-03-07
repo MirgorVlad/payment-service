@@ -2,14 +2,13 @@ package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.constant.WorkspaceEntityType;
-import org.mirgor.common.entity.Price;
+import org.mirgor.common.dto.entity.Price;
 import org.mirgor.entity.PriceEntity;
 import org.mirgor.repository.PriceRepository;
 import org.mirgor.service.mapper.PriceMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +64,7 @@ public class DaoPriceService {
         return priceRepository.findByWorkspaceUserId(userId).stream().map(priceMapper::toDto).toList();
     }
 
-    public PriceEntity findLatestByWorkspaceIdAndEntityType(Long workspaceId, WorkspaceEntityType type) {
-        return priceRepository.findLatestByWorkspaceIdAndEntityType(workspaceId, type);
+    public Optional<Price> findLatestByWorkspaceIdAndEntityType(Long workspaceId, WorkspaceEntityType type) {
+        return priceRepository.findLatestByWorkspaceIdAndEntityType(workspaceId, type).map(priceMapper::toDto);
     }
 }

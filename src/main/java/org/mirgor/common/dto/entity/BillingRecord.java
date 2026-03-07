@@ -1,4 +1,4 @@
-package org.mirgor.common.entity;
+package org.mirgor.common.dto.entity;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

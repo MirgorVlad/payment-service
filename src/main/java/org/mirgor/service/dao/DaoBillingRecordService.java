@@ -1,8 +1,7 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.workspace.TimeInterval;
-import org.mirgor.common.entity.BillingRecord;
+import org.mirgor.common.dto.entity.BillingRecord;
 import org.mirgor.entity.BillingRecordEntity;
 import org.mirgor.repository.BillingRecordRepository;
 import org.mirgor.service.mapper.BillingRecordMapper;

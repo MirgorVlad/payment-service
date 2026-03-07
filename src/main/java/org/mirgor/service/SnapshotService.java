@@ -2,7 +2,7 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.common.entity.Snapshot;
+import org.mirgor.common.dto.entity.Snapshot;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoSnapshotService;
 import org.springframework.stereotype.Service;

@@ -21,7 +21,7 @@ public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
              ORDER BY p.createTime DESC
              LIMIT 1
             """)
-    PriceEntity findLatestByWorkspaceIdAndEntityType(@Param("workspaceId") Long workspaceId,
+    Optional<PriceEntity> findLatestByWorkspaceIdAndEntityType(@Param("workspaceId") Long workspaceId,
                                                     @Param("entityType") WorkspaceEntityType entityType);
 
     boolean existsById(Long id);

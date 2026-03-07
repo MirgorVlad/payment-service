@@ -1,7 +1,7 @@
 package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.entity.Price;
+import org.mirgor.common.dto.entity.Price;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoPriceService;
 import org.springframework.stereotype.Service;

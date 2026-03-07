@@ -1,6 +1,6 @@
 package org.mirgor.service.mapper;
 
-import org.mirgor.common.entity.Price;
+import org.mirgor.common.dto.entity.Price;
 import org.mirgor.entity.PriceEntity;
 import org.springframework.stereotype.Component;
 

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.auth.AuthRequest;
 import org.mirgor.common.auth.AuthResponse;
-import org.mirgor.common.entity.User;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.security.jwt.JwtService;
 import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.service.UserService;

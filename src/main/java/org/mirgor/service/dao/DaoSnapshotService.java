@@ -2,8 +2,8 @@ package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.constant.WorkspaceEntityType;
-import org.mirgor.common.dto.workspace.TimeInterval;
-import org.mirgor.common.entity.Snapshot;
+import org.mirgor.common.dto.TimeInterval;
+import org.mirgor.common.dto.entity.Snapshot;
 import org.mirgor.entity.SnapshotEntity;
 import org.mirgor.repository.SnapshotRepository;
 import org.mirgor.service.mapper.SnapshotMapper;

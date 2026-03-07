@@ -1,4 +1,4 @@
-package org.mirgor.common.dto.workspace;
+package org.mirgor.common.dto;
 
 import java.time.LocalDateTime;
 
