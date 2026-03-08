@@ -22,7 +22,7 @@ public interface SnapshotRepository extends JpaRepository<SnapshotEntity, Long> 
               AND s.snapshotTime >= :startTime
               AND s.snapshotTime < :endTime
             """)
-    Long findMaxEntityCountByWorkspaceAndPeriod(
+    Optional<Long> findMaxEntityCountByWorkspaceAndPeriod(
             @Param("workspaceId") long workspaceId,
             @Param("entityType") WorkspaceEntityType workspaceEntityType,
             @Param("startTime") LocalDateTime startTime,

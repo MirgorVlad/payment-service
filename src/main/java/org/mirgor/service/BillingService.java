@@ -6,6 +6,7 @@ import org.mirgor.common.constant.Role;
 import org.mirgor.common.constant.WorkspaceEntityType;
 import org.mirgor.common.dto.TimeInterval;
 import org.mirgor.common.dto.entity.BillingRecord;
+import org.mirgor.exception.BillingException;
 import org.mirgor.security.utils.SecurityUtil;
 import org.mirgor.service.dao.DaoBillingRecordService;
 import org.mirgor.service.dao.DaoPriceService;
@@ -49,9 +50,10 @@ public class BillingService {
         var entityCountMap = Arrays.stream(WorkspaceEntityType.values())
                 .collect(Collectors.toMap(Function.identity(),
                         we -> {
-                            var count = daoSnapshotService.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, we, timeInterval); //TODO implement different strategies [Max, avg, latest]
+                            var count = daoSnapshotService.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, we, timeInterval)
+                                    .orElse(0L); //TODO implement different strategies [Max, avg, latest]
                             var price = daoPriceService.findLatestByWorkspaceIdAndEntityType(workspaceId, we)
-                                    .orElseThrow(() -> new IllegalArgumentException(String.format("Price is not found for workspace %s and entity %s", workspaceId, we)));
+                                    .orElseThrow(() -> new BillingException(String.format("Price is not found for workspace %s and entity %s", workspaceId, we)));
                             return new BillingService.EntityCountPrice(count, price.getPrice(), price.getCurrency());
                         }));
 
