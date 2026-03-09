@@ -75,4 +75,12 @@ public class DaoSnapshotService {
     public Optional<Long> findMaxEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
         return snapshotRepository.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
     }
+
+    public Optional<Long> findLatestEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findLatestEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
+    }
+
+    public Optional<Long> findAvgEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findAvgEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
+    }
 }

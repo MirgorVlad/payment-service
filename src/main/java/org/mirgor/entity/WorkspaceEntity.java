@@ -1,25 +1,30 @@
 package org.mirgor.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.mirgor.common.constant.SyncStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "workspaces")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "workspaces",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_user_email_host",
+                        columnNames = {"email", "host"}
+                )
+        })
 public class WorkspaceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   //TODO make composed key host + email
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String host;
@@ -30,6 +35,8 @@ public class WorkspaceEntity {
     @Column(nullable = false, length = 100)
     private String password;
 
+    private LocalDateTime lastSyncTime;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -39,16 +46,18 @@ public class WorkspaceEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_payment_config")
+    private WorkspacePaymentConfigEntity workspacePaymentConfig;
+
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL)
     private List<SnapshotEntity> snapshot;
 
-    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL)
     private List<PriceEntity> priceList;
 
-    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL)
     private List<BillingRecordEntity> billingRecordEntityList;
 
-    //TODO add  last sync Ts
-    //TODO add timezone
 }
 

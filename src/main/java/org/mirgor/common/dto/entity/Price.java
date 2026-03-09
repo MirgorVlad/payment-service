@@ -26,9 +26,6 @@ public class Price {
     private WorkspaceEntityType workspaceEntityType;
 
     @NotNull
-    private Currency currency; //TODO move to Workspace level
-
-    @NotNull
     @Positive
     private BigDecimal price;
 }

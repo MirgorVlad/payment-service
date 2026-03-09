@@ -29,6 +29,37 @@ public interface SnapshotRepository extends JpaRepository<SnapshotEntity, Long> 
             @Param("endTime") LocalDateTime endTime
     );
 
+    @Query("""
+            SELECT AVG(s.count) FROM SnapshotEntity s
+            WHERE s.workspace.id = :workspaceId
+              AND s.workspaceEntityType = :entityType
+              AND s.snapshotTime >= :startTime
+              AND s.snapshotTime < :endTime
+            """)
+    Optional<Long> findAvgEntityCountByWorkspaceAndPeriod(
+            @Param("workspaceId") long workspaceId,
+            @Param("entityType") WorkspaceEntityType workspaceEntityType,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime
+    );
+
+    @Query("""
+            SELECT s.count FROM SnapshotEntity s
+            WHERE s.workspace.id = :workspaceId
+              AND s.workspaceEntityType = :entityType
+              AND s.snapshotTime >= :startTime
+              AND s.snapshotTime < :endTime
+            ORDER by s.snapshotTime DESC
+            LIMIT 1
+            """)
+    Optional<Long> findLatestEntityCountByWorkspaceAndPeriod(
+            @Param("workspaceId") long workspaceId,
+            @Param("entityType") WorkspaceEntityType workspaceEntityType,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime
+    );
+
+
     boolean existsById(Long id);
 
     boolean existsByIdAndWorkspaceUserId(Long id, Long userId);

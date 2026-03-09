@@ -25,15 +25,11 @@ public class PriceEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
-    private WorkspaceEntity workspace;   //TODO make workspace_id + entityId unique
+    private WorkspaceEntity workspace;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private WorkspaceEntityType workspaceEntityType;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Currency currency;
 
     @Column(nullable = false)
     private BigDecimal price;

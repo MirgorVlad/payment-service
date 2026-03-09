@@ -36,7 +36,7 @@ public class BillingRecordEntity {
     private WorkspaceEntity workspace;
 
     @Column(nullable = false)
-    private LocalDateTime startBillingPeriod; //TODO to Instant
+    private LocalDateTime startBillingPeriod;
 
     @Column(nullable = false)
     private LocalDateTime endBillingPeriod;

@@ -30,7 +30,6 @@ public class DaoPriceService {
                     .orElseThrow(() -> new IllegalArgumentException("Price not found: " + price.getId()));
             entity.setWorkspace(workspaceEntity);
             entity.setWorkspaceEntityType(price.getWorkspaceEntityType());
-            entity.setCurrency(price.getCurrency());
             entity.setPrice(price.getPrice());
         } else {
             entity = priceMapper.fromDto(price);

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.dto.TimeInterval;
 import org.mirgor.common.dto.entity.BillingRecord;
-import org.mirgor.service.BillingService;
+import org.mirgor.service.billing.BillingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

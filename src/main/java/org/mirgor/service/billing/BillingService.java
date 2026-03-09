@@ -1,23 +1,25 @@
-package org.mirgor.service;
+package org.mirgor.service.billing;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.mirgor.common.constant.Currency;
+import org.mirgor.common.constant.PricingStrategyType;
 import org.mirgor.common.constant.Role;
 import org.mirgor.common.constant.WorkspaceEntityType;
+import org.mirgor.common.dto.EntityCountPrice;
 import org.mirgor.common.dto.TimeInterval;
 import org.mirgor.common.dto.entity.BillingRecord;
 import org.mirgor.exception.BillingException;
 import org.mirgor.security.utils.SecurityUtil;
+import org.mirgor.service.billing.pricing_strategy.PricingStrategy;
 import org.mirgor.service.dao.DaoBillingRecordService;
 import org.mirgor.service.dao.DaoPriceService;
-import org.mirgor.service.dao.DaoSnapshotService;
 import org.mirgor.service.dao.DaoWorkspaceService;
 import org.mirgor.service.utils.TimeUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +34,19 @@ public class BillingService {
 
     private final DaoBillingRecordService daoBillingRecordService;
     private final DaoWorkspaceService daoWorkspaceService;
-    private final DaoSnapshotService daoSnapshotService;
     private final DaoPriceService daoPriceService;
+
+    private final List<PricingStrategy> pricingStrategyList;
+    private Map<PricingStrategyType, PricingStrategy> pricingStrategyMap;
+
+    @PostConstruct
+    private void initStrategyMap() {
+        pricingStrategyMap = pricingStrategyList.stream()
+                .collect(Collectors.toMap(
+                        PricingStrategy::getPricingStrategyType,
+                        Function.identity()
+                ));
+    }
 
     @Scheduled(cron = "0 0 0 L * ?")
     void generateMonthlyBillingRecords() {
@@ -47,18 +60,18 @@ public class BillingService {
 
     @Async("dbTaskExecutor")
     public CompletableFuture<BillingRecord> generateBillingRecord(Long workspaceId, TimeInterval timeInterval) {
+        var workspace = daoWorkspaceService.findWorkspaceById(workspaceId).orElseThrow(() -> new IllegalArgumentException(String.format("Workspace %s is not found", workspaceId)));
         var entityCountMap = Arrays.stream(WorkspaceEntityType.values())
                 .collect(Collectors.toMap(Function.identity(),
                         we -> {
-                            var count = daoSnapshotService.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, we, timeInterval)
-                                    .orElse(0L); //TODO implement different strategies [Max, avg, latest]
+                            var count = pricingStrategyMap.get(workspace.getPricingStrategy()).calculate(workspaceId, we, timeInterval);
                             var price = daoPriceService.findLatestByWorkspaceIdAndEntityType(workspaceId, we)
                                     .orElseThrow(() -> new BillingException(String.format("Price is not found for workspace %s and entity %s", workspaceId, we)));
-                            return new BillingService.EntityCountPrice(count, price.getPrice(), price.getCurrency());
+                            return new EntityCountPrice(count, price.getPrice());
                         }));
 
 
-        var billingRecord = buildBillingRecord(workspaceId, timeInterval, entityCountMap);
+        var billingRecord = buildBillingRecord(workspaceId, timeInterval, entityCountMap, workspace.getCurrency());
         return CompletableFuture.completedFuture(daoBillingRecordService.saveBillingRecord(billingRecord));
     }
 
@@ -109,24 +122,20 @@ public class BillingService {
         return daoBillingRecordService.findByWorkspaceUserId(userId);
     }
 
-    private BillingRecord buildBillingRecord(Long workspaceId, TimeInterval timeInterval, Map<WorkspaceEntityType, BillingService.EntityCountPrice> entityCountMap) {
+    private BillingRecord buildBillingRecord(Long workspaceId, TimeInterval timeInterval,
+                                             Map<WorkspaceEntityType, EntityCountPrice> entityCountMap,
+                                             Currency currency) {
         return BillingRecord.builder()
                 .workspaceId(workspaceId)
-                .assetCount(entityCountMap.get(WorkspaceEntityType.ASSET).count)
-                .deviceCount(entityCountMap.get(WorkspaceEntityType.DEVICE).count)
-                .customerCount(entityCountMap.get(WorkspaceEntityType.CUSTOMER).count)
+                .assetCount(entityCountMap.get(WorkspaceEntityType.ASSET).count())
+                .deviceCount(entityCountMap.get(WorkspaceEntityType.DEVICE).count())
+                .customerCount(entityCountMap.get(WorkspaceEntityType.CUSTOMER).count())
                 .assetPrice(entityCountMap.get(WorkspaceEntityType.ASSET).total())
                 .devicePrice(entityCountMap.get(WorkspaceEntityType.DEVICE).total())
                 .customerPrice(entityCountMap.get(WorkspaceEntityType.CUSTOMER).total())
+                .currency(currency)
                 .startBillingPeriod(timeInterval.startTime())
                 .endBillingPeriod(timeInterval.endTime())
                 .build();
-    }
-
-    record EntityCountPrice(Long count, BigDecimal price, Currency currency) {
-
-        BigDecimal total() {
-            return price.multiply(BigDecimal.valueOf(count));
-        }
     }
 }

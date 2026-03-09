@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mirgor.common.constant.Currency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,7 +33,8 @@ public class BillingRecord {
     @Min(0)
     private BigDecimal customerPrice;
 
-    //TODO add currency
+    @NotNull
+    private Currency currency;
 
     @NotNull
     private LocalDateTime startBillingPeriod;

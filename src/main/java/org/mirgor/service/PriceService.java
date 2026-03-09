@@ -26,7 +26,6 @@ public class PriceService {
 
         existing.setWorkspaceId(updatedPrice.getWorkspaceId());
         existing.setPrice(updatedPrice.getPrice());
-        existing.setCurrency(updatedPrice.getCurrency());
         existing.setWorkspaceEntityType(updatedPrice.getWorkspaceEntityType());
 
         return daoPriceService.savePrice(existing);
