@@ -46,9 +46,9 @@ public class WorkspaceEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "workspace_payment_config")
-    private WorkspacePaymentConfigEntity workspacePaymentConfig;
+    private WorkspacePaymentConfigEntity workspacePaymentConfig;  //TODO why LAZY failed?
 
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL)
     private List<SnapshotEntity> snapshot;
