@@ -16,6 +16,7 @@ public class BillingRecordMapper implements EntityMapper<BillingRecordEntity, Bi
                 .devicePrice(dto.getDevicePrice())
                 .assetPrice(dto.getAssetPrice())
                 .customerPrice(dto.getCustomerPrice())
+                .currency(dto.getCurrency())
                 .startBillingPeriod(dto.getStartBillingPeriod())
                 .endBillingPeriod(dto.getEndBillingPeriod())
                 .build();
@@ -32,6 +33,7 @@ public class BillingRecordMapper implements EntityMapper<BillingRecordEntity, Bi
                 .assetPrice(entity.getAssetPrice())
                 .customerPrice(entity.getCustomerPrice())
                 .customerCount(entity.getCustomerCount())
+                .currency(entity.getCurrency())
                 .startBillingPeriod(entity.getStartBillingPeriod())
                 .endBillingPeriod(entity.getEndBillingPeriod())
                 .build();

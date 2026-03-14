@@ -46,7 +46,7 @@ public class BillingGenerationFlowIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should successfully generate billing record with MAX payment strategy")
     void shouldSuccessfullyGenerateBillingRecord() throws ExecutionException, InterruptedException {
         //GIVEN
-        TimeInterval timeInterval = new TimeInterval(LocalDateTime.now().minusHours(10), LocalDateTime.now());
+        TimeInterval timeInterval = new TimeInterval(LocalDateTime.now().minusHours(10), LocalDateTime.now().plusHours(1));
 
         var user = createUser();
         var workspace = createWorkspace(user.getId(), "http://localhost:wirePort");
@@ -67,9 +67,9 @@ public class BillingGenerationFlowIntegrationTest extends BaseIntegrationTest {
         assertEquals(assetSnapshot.getCount(), billingRecord.getAssetCount());
         assertEquals(deviceSnapshot.getCount(), billingRecord.getDeviceCount());
         assertEquals(customerSnapshot.getCount(), billingRecord.getCustomerCount());
-        assertEquals(assetPrice.getPrice().multiply(BigDecimal.valueOf(assetSnapshot.getCount())), billingRecord.getAssetPrice());
-        assertEquals(devicePrice.getPrice().multiply(BigDecimal.valueOf(deviceSnapshot.getCount())), billingRecord.getDevicePrice());
-        assertEquals(customerPrice.getPrice().multiply(BigDecimal.valueOf(customerSnapshot.getCount())), billingRecord.getCustomerPrice());
+        assertEquals(assetPrice.getPrice().multiply(BigDecimal.valueOf(assetSnapshot.getCount())).setScale(2), billingRecord.getAssetPrice());
+        assertEquals(devicePrice.getPrice().multiply(BigDecimal.valueOf(deviceSnapshot.getCount()).setScale(2)), billingRecord.getDevicePrice());
+        assertEquals(customerPrice.getPrice().multiply(BigDecimal.valueOf(customerSnapshot.getCount()).setScale(2)), billingRecord.getCustomerPrice());
         assertEquals(workspace.getCurrency(), billingRecord.getCurrency());
     }
 

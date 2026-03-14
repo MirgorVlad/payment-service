@@ -2,6 +2,7 @@ package org.mirgor.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.mirgor.common.constant.Currency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,6 +31,10 @@ public class BillingRecordEntity {
     private BigDecimal assetPrice;
 
     private BigDecimal customerPrice;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private Currency currency;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id")

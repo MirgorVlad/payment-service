@@ -39,7 +39,11 @@ public class AuthController {
             );
             SecurityUser principal = (SecurityUser) authentication.getPrincipal();
             String token = jwtService.generateToken(principal);
-            return ResponseEntity.ok(new AuthResponse(token));
+            String role = principal.getAuthorities().stream()
+                    .findFirst()
+                    .map(a -> a.getAuthority().replace("ROLE_", ""))
+                    .orElse("USER");
+            return ResponseEntity.ok(new AuthResponse(token, role));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
