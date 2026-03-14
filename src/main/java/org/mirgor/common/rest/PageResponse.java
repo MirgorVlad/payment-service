@@ -1,4 +1,4 @@
-package org.mirgor.common.dto.rest;
+package org.mirgor.common.rest;
 
 import java.util.List;
 

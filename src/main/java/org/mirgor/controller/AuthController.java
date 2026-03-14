@@ -2,9 +2,9 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.auth.AuthRequest;
-import org.mirgor.common.dto.auth.AuthResponse;
-import org.mirgor.common.dto.User;
+import org.mirgor.common.auth.AuthRequest;
+import org.mirgor.common.auth.AuthResponse;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.security.jwt.JwtService;
 import org.mirgor.security.principal.SecurityUser;
 import org.mirgor.service.UserService;
@@ -39,7 +39,11 @@ public class AuthController {
             );
             SecurityUser principal = (SecurityUser) authentication.getPrincipal();
             String token = jwtService.generateToken(principal);
-            return ResponseEntity.ok(new AuthResponse(token));
+            String role = principal.getAuthorities().stream()
+                    .findFirst()
+                    .map(a -> a.getAuthority().replace("ROLE_", ""))
+                    .orElse("USER");
+            return ResponseEntity.ok(new AuthResponse(token, role));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

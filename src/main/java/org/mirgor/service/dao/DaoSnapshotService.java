@@ -1,7 +1,9 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Snapshot;
+import org.mirgor.common.constant.WorkspaceEntityType;
+import org.mirgor.common.dto.TimeInterval;
+import org.mirgor.common.dto.entity.Snapshot;
 import org.mirgor.entity.SnapshotEntity;
 import org.mirgor.repository.SnapshotRepository;
 import org.mirgor.service.mapper.SnapshotMapper;
@@ -29,8 +31,9 @@ public class DaoSnapshotService {
             entity = snapshotRepository.findById(snapshot.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Snapshot not found: " + snapshot.getId()));
             entity.setWorkspace(workspaceEntity);
-            entity.setSnapshotEntityType(snapshot.getSnapshotEntityType());
+            entity.setWorkspaceEntityType(snapshot.getWorkspaceEntityType());
             entity.setCount(snapshot.getCount());
+            entity.setSyncId(UUID.randomUUID());
         } else {
             entity = snapshotMapper.fromDto(snapshot);
             entity.setWorkspace(workspaceEntity);
@@ -67,5 +70,17 @@ public class DaoSnapshotService {
 
     public List<Snapshot> findByWorkspaceUserId(Long userId) {
         return snapshotRepository.findByWorkspaceUserId(userId).stream().map(snapshotMapper::toDto).toList();
+    }
+
+    public Optional<Long> findMaxEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findMaxEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
+    }
+
+    public Optional<Long> findLatestEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findLatestEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
+    }
+
+    public Optional<Long> findAvgEntityCountByWorkspaceAndPeriod(Long workspaceId, WorkspaceEntityType type, TimeInterval timeInterval) {
+        return snapshotRepository.findAvgEntityCountByWorkspaceAndPeriod(workspaceId, type, timeInterval.startTime(), timeInterval.endTime());
     }
 }

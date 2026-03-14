@@ -6,9 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mirgor.common.constant.Currency;
-import org.mirgor.common.constant.SnapshotEntityType;
+import org.mirgor.common.constant.WorkspaceEntityType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -28,14 +29,16 @@ public class PriceEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private SnapshotEntityType snapshotEntityType;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Currency currency;
+    private WorkspaceEntityType workspaceEntityType;
 
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createTime;
 
+    @PrePersist
+    protected void onCreate() {
+        createTime = LocalDateTime.now();
+    }
 }

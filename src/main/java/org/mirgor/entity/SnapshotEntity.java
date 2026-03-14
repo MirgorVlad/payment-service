@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mirgor.common.constant.SnapshotEntityType;
+import org.mirgor.common.constant.WorkspaceEntityType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,7 +31,7 @@ public class SnapshotEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private SnapshotEntityType snapshotEntityType;
+    private WorkspaceEntityType workspaceEntityType;
 
     @Column(nullable = false)
     private Long count;

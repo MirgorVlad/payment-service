@@ -1,7 +1,8 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Price;
+import org.mirgor.common.constant.WorkspaceEntityType;
+import org.mirgor.common.dto.entity.Price;
 import org.mirgor.entity.PriceEntity;
 import org.mirgor.repository.PriceRepository;
 import org.mirgor.service.mapper.PriceMapper;
@@ -28,8 +29,7 @@ public class DaoPriceService {
             entity = priceRepository.findById(price.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Price not found: " + price.getId()));
             entity.setWorkspace(workspaceEntity);
-            entity.setSnapshotEntityType(price.getSnapshotEntityType());
-            entity.setCurrency(price.getCurrency());
+            entity.setWorkspaceEntityType(price.getWorkspaceEntityType());
             entity.setPrice(price.getPrice());
         } else {
             entity = priceMapper.fromDto(price);
@@ -61,5 +61,9 @@ public class DaoPriceService {
 
     public List<Price> findByWorkspaceUserId(Long userId) {
         return priceRepository.findByWorkspaceUserId(userId).stream().map(priceMapper::toDto).toList();
+    }
+
+    public Optional<Price> findLatestByWorkspaceIdAndEntityType(Long workspaceId, WorkspaceEntityType type) {
+        return priceRepository.findLatestByWorkspaceIdAndEntityType(workspaceId, type).map(priceMapper::toDto);
     }
 }

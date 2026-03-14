@@ -2,7 +2,7 @@ package org.mirgor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.Price;
+import org.mirgor.common.dto.entity.Price;
 import org.mirgor.service.PriceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

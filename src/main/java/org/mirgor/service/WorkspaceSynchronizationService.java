@@ -2,11 +2,11 @@ package org.mirgor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mirgor.common.constant.SnapshotEntityType;
+import org.mirgor.common.constant.WorkspaceEntityType;
 import org.mirgor.common.constant.SyncStatus;
-import org.mirgor.common.dto.Snapshot;
-import org.mirgor.common.dto.rest.WorkspaceLoginResponse;
-import org.mirgor.common.dto.workspace.Workspace;
+import org.mirgor.common.dto.entity.Snapshot;
+import org.mirgor.common.rest.WorkspaceLoginResponse;
+import org.mirgor.common.dto.entity.Workspace;
 import org.mirgor.service.dao.DaoWorkspaceService;
 import org.mirgor.service.rest.WorkspaceRestClient;
 import org.springframework.scheduling.annotation.Async;
@@ -80,12 +80,12 @@ public class WorkspaceSynchronizationService {
                 });
     }
 
-    private CompletableFuture<Map<SnapshotEntityType, Long>> countWorkspaceEntities(Workspace workspace) {
+    private CompletableFuture<Map<WorkspaceEntityType, Long>> countWorkspaceEntities(Workspace workspace) {
         return workspaceRestClient.loginWorkspace(workspace)
                 .thenCompose(token -> {
-                    Map<SnapshotEntityType, Long> entityCountMap = new ConcurrentHashMap<>();
+                    Map<WorkspaceEntityType, Long> entityCountMap = new ConcurrentHashMap<>();
 
-                    List<CompletableFuture<Void>> futures = Arrays.stream(SnapshotEntityType.values())
+                    List<CompletableFuture<Void>> futures = Arrays.stream(WorkspaceEntityType.values())
                             .map(entity -> workspaceRestClient.fetchAllEntitiesCount(workspace, token.token(), entity)
                                     .thenAccept(count -> entityCountMap.put(entity, count)))
                             .toList();
@@ -105,10 +105,10 @@ public class WorkspaceSynchronizationService {
         }, dbTaskExecutor);
     }
 
-    private static Snapshot buildSnapshot(Workspace workspace, SnapshotEntityType entity, Long count, UUID syncId) {
+    private static Snapshot buildSnapshot(Workspace workspace, WorkspaceEntityType entity, Long count, UUID syncId) {
         return Snapshot.builder()
                 .syncId(syncId)
-                .snapshotEntityType(entity)
+                .workspaceEntityType(entity)
                 .count(count)
                 .workspaceId(workspace.getId())
                 .build();

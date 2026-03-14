@@ -1,4 +1,4 @@
-package org.mirgor.common.dto;
+package org.mirgor.common.dto.entity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mirgor.common.constant.Currency;
-import org.mirgor.common.constant.SnapshotEntityType;
+import org.mirgor.common.constant.WorkspaceEntityType;
 
 import java.math.BigDecimal;
 
@@ -23,10 +23,7 @@ public class Price {
     private Long workspaceId;
 
     @NotNull
-    private SnapshotEntityType snapshotEntityType;
-
-    @NotNull
-    private Currency currency;
+    private WorkspaceEntityType workspaceEntityType;
 
     @NotNull
     @Positive

@@ -1,7 +1,7 @@
 package org.mirgor.service.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.User;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.entity.UserEntity;
 import org.mirgor.exception.ResourceAlreadyExistsException;
 import org.mirgor.repository.UserRepository;

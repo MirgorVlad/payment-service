@@ -5,4 +5,6 @@ public interface EntityMapper<E, D> {
     E fromDto(D entityDto);
 
     D toDto(E entity);
+
+    //TODO add merge for update
 }

@@ -1,7 +1,7 @@
 package org.mirgor.service.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.mirgor.common.dto.User;
+import org.mirgor.common.dto.entity.User;
 import org.mirgor.entity.UserEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
