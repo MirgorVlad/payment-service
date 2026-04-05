@@ -36,3 +36,6 @@ build/
 /.idea/
 /.claude/
 CLAUDE.md
+
+### Frontend ###
+frontend/node_modules/
